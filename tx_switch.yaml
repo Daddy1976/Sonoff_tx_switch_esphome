@@ -100,7 +100,6 @@ binary_sensor:
     filters:
       - invert:
       - delayed_off: 10ms
-  # the 3 lines below toggle the main relay on press of reset button
     on_press:
       - switch.toggle: relay_1
       - mqtt.publish_json:
@@ -109,12 +108,9 @@ binary_sensor:
               root["key"] = id(relay_1).state;
   - platform: gpio
     pin: GPIO09
-    id: reset
-    internal: true  # hides reset switch from HomeAssistant
     filters:
       - invert:
       - delayed_off: 10ms
-  # the 3 lines below toggle the main relay on press of reset button
     on_press:
       - switch.toggle: relay_2
       - mqtt.publish_json:
@@ -123,12 +119,9 @@ binary_sensor:
               root["key"] = id(relay_2).state;
   - platform: gpio
     pin: GPIO10
-    id: reset
-    internal: true  # hides reset switch from HomeAssistant
     filters:
       - invert:
       - delayed_off: 10ms
-  # the 3 lines below toggle the main relay on press of reset button
     on_press:
       - switch.toggle: relay_3
       - mqtt.publish_json:
