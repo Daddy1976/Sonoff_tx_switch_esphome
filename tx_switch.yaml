@@ -121,20 +121,20 @@ binary_sensor:
           topic: touchpad2
           payload: |-
               root["key"] = id(relay_2).state;
-  - platform: gpio
-    pin:
-      number: GPIO10
-      mode:
-        input: true
-        pullup: true
-      inverted: true
-    name: "Sonoff TX Touchpad 3"
-    on_press:
-      - switch.toggle: relay_3
-      - mqtt.publish_json:
-          topic: touchpad3
-          payload: |-
-              root["key"] = id(relay_3).state;
+#  - platform: gpio
+#    pin:
+#      number: GPIO10
+#      mode:
+#        input: true
+#        pullup: true
+#      inverted: true
+#    name: "Sonoff TX Touchpad 3"
+#    on_press:
+#      - switch.toggle: relay_3
+#      - mqtt.publish_json:
+#          topic: touchpad3
+#          payload: |-
+#              root["key"] = id(relay_3).state;
   - platform: status
     name: ${device_name} Status
 
@@ -148,10 +148,10 @@ switch:
     name: ${device_name} switch 2
     pin: GPIO5
     id: relay_2
-  - platform: gpio
-    name: ${device_name} switch 3
-    pin: GPIO4
-    id: relay_3
+#  - platform: gpio
+#    name: ${device_name} switch 3
+#    pin: GPIO4
+#    id: relay_3
 
 output:
   # the 3 lines below control the Blue LED
