@@ -1,10 +1,9 @@
-substitutions:
-//
-//  Sonoff-TX-switch.yaml
-//  
-//
-//  Created by Marek Halma on 12/08/2023.
-//
+#
+#   Sonoff-TX-switch.yaml
+#
+#
+#   Created by Marek Halma on 12/08/2023.
+#
 
 esphome:
   name: ${device_name}
