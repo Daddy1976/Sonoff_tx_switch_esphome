@@ -107,22 +107,53 @@ binary_sensor:
           topic: svetlo
           payload: |-
               root["key"] = id(relay_1).state;
+  - platform: gpio
+    pin: GPIO09
+    id: reset
+    internal: true  # hides reset switch from HomeAssistant
+    filters:
+      - invert:
+      - delayed_off: 10ms
+  # the 3 lines below toggle the main relay on press of reset button
+    on_press:
+      - switch.toggle: relay_2
+      - mqtt.publish_json:
+          topic: svetlo
+          payload: |-
+              root["key"] = id(relay_2).state;
+  - platform: gpio
+    pin: GPIO10
+    id: reset
+    internal: true  # hides reset switch from HomeAssistant
+    filters:
+      - invert:
+      - delayed_off: 10ms
+  # the 3 lines below toggle the main relay on press of reset button
+    on_press:
+      - switch.toggle: relay_3
+      - mqtt.publish_json:
+          topic: svetlo
+          payload: |-
+              root["key"] = id(relay_3).state;
   - platform: status
     name: ${device_name} Status
 
   # the 13 lines below toggle the main relay on command
 switch:
   - platform: gpio
-    name: ${device_name} switch
-    # internal: true  # hides relay toggle from HomeAssistant
+    name: ${device_name} switch 1
     pin: GPIO012
     id: relay_1
+  - platform: gpio
+    name: ${device_name} switch 2
+    pin: GPIO5
+    id: relay_2
+  - platform: gpio
+    name: ${device_name} switch 3
+    pin: GPIO4
+    id: relay_3
 
 output:
-  # the 3 lines below control the main relay
-  - platform: gpio
-    pin: GPIO4
-    id: main_light_relay
   # the 3 lines below control the Blue LED
   - platform: esp8266_pwm
     id: blue_led
@@ -130,12 +161,6 @@ output:
     inverted: True
 
 light:
-  # the 4 lines below define the main relay as a light
-  - platform: binary
-    name: ${device_name}_light # you can enter a custom name to appear in HomeAsistant here.
-    output: main_light_relay
-    id: light_id
-    internal: True
   # the 4 lines below define the Blue LED light on Sonoff Mini, to expose in HomeAssistant remove line "internal: true"
   - platform: monochromatic
     name: ${device_name}_blueled
