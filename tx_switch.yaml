@@ -4,6 +4,24 @@
 #
 #   Created by Marek Halma on 12/08/2023.
 #
+#   Add new file .yaml and copy this stricture
+
+#   substitutions:
+#
+#       device_name: "test"
+#       wifi_ssid: !secret wifi_ssid
+#       wifi_pass: !secret wifi_password
+#       broker_ip: "192.168.2.130"
+#       broker_user: !secret user
+#       broker_password: !secret password
+#
+#   packages:
+#       remote_package:
+#           url: https://github.com/Daddy1976/Sonoff_tx_switch_esphome
+#           ref: main
+#           files: [tx_switch.yaml]
+#           refresh: 300s
+        
 
 esphome:
   name: ${device_name}
@@ -17,7 +35,7 @@ esphome:
 
 wifi:
   ssid: ${wifi_ssid}
-  password: ${wifi_password}
+  password: ${wifi_pass}
 
 logger:
   
