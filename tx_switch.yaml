@@ -94,38 +94,45 @@ text_sensor:
 binary_sensor:
   # the 7 lines below define the reset button
   - platform: gpio
-    pin: GPIO00
-    id: reset
-    internal: true  # hides reset switch from HomeAssistant
-    filters:
-      - invert:
-      - delayed_off: 10ms
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Sonoff TX Touchpad 1"
     on_press:
       - switch.toggle: relay_1
       - mqtt.publish_json:
-          topic: svetlo
+          topic: touchpad1
           payload: |-
               root["key"] = id(relay_1).state;
   - platform: gpio
-    pin: GPIO09
-    filters:
-      - invert:
-      - delayed_off: 10ms
+    pin:
+      number: GPIO9
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Sonoff TX Touchpad 2"
     on_press:
       - switch.toggle: relay_2
       - mqtt.publish_json:
-          topic: svetlo
+          topic: touchpad2
           payload: |-
               root["key"] = id(relay_2).state;
   - platform: gpio
-    pin: GPIO10
-    filters:
-      - invert:
-      - delayed_off: 10ms
+    pin:
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Sonoff TX Touchpad 3"
     on_press:
       - switch.toggle: relay_3
       - mqtt.publish_json:
-          topic: svetlo
+          topic: touchpad3
           payload: |-
               root["key"] = id(relay_3).state;
   - platform: status
@@ -160,3 +167,4 @@ light:
     output: blue_led
     id: blue_led_light
     internal: True
+    
