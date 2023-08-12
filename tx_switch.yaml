@@ -11,7 +11,7 @@
 #       device_name: "test"
 #       wifi_ssid: !secret wifi_ssid
 #       wifi_pass: !secret wifi_password
-#       broker_ip: "192.168.2.130"
+#       broker_ip: "#BROKER_IP#" my broker is CERBO GX Victron or Homeassistant with Mosquitto
 #       broker_user: !secret user
 #       broker_password: !secret password
 #
