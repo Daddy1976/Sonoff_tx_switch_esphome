@@ -104,7 +104,7 @@ binary_sensor:
     on_press:
       - switch.toggle: relay_1
       - mqtt.publish_json:
-          topic: touchpad1
+          topic: button
           payload: |-
               root["key"] = id(relay_1).state;
   - platform: status
