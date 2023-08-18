@@ -107,20 +107,20 @@ binary_sensor:
           topic: touchpad1
           payload: |-
               root["key"] = id(relay_1).state;
-#  - platform: gpio
-#    pin:
-#      number: GPIO9
-#      mode:
-#        input: true
-#        pullup: true
-#      inverted: true
-#    name: "Sonoff TX Touchpad 2"
-#    on_press:
-#      - switch.toggle: relay_2
-#      - mqtt.publish_json:
-#          topic: touchpad2
-#          payload: |-
-#              root["key"] = id(relay_2).state;
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Sonoff TX Touchpad 2"
+    on_press:
+      - switch.toggle: relay_2
+      - mqtt.publish_json:
+          topic: touchpad2
+          payload: |-
+              root["key"] = id(relay_2).state;
 #  - platform: gpio
 #    pin:
 #      number: GPIO10
@@ -144,10 +144,10 @@ switch:
     name: ${device_name} switch 1
     pin: GPIO012
     id: relay_1
-#  - platform: gpio
-#    name: ${device_name} switch 2
-#    pin: GPIO5
-#    id: relay_2
+  - platform: gpio
+    name: ${device_name} switch 2
+    pin: GPIO5
+    id: relay_2
 #  - platform: gpio
 #    name: ${device_name} switch 3
 #    pin: GPIO4
