@@ -57,6 +57,12 @@ mqtt:
   username: ${broker_user}
   password: ${broker_password}
   discovery_prefix: homeassistant
+  on_message:
+    - topic: /homeassistant/4ch/UP/switch/up_relay_3/state
+      payload: 'ON'
+      then:
+        - switch.turn_on:
+            id: relay_1
 
 sensor:
   # Uptime sensor
