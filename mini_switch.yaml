@@ -58,25 +58,15 @@ mqtt:
   password: ${broker_password}
   discovery_prefix: homeassistant
   on_message:
-    - topic: /homeassistant/4ch/UP/switch/up_relay_1/state
+    - topic: /homeassistant/mini/$device_name/switch/1
       payload: 'ON'
       then:
         - switch.turn_on:
             id: relay_1
-    - topic: /homeassistant/4ch/UP/switch/up_relay_2/state
-      payload: 'ON'
+    - topic: /homeassistant/mini/$device_name/switch/1
+      payload: 'OFF'
       then:
-        - switch.turn_on:
-            id: relay_1
-    - topic: /homeassistant/4ch/UP/switch/up_relay_3/state
-      payload: 'ON'
-      then:
-        - switch.turn_on:
-            id: relay_1
-    - topic: /homeassistant/4ch/DOWN/switch/down_relay_2/state
-      payload: 'ON'
-      then:
-        - switch.turn_on:
+        - switch.turn_off:
             id: relay_1
 
 sensor:
@@ -134,7 +124,7 @@ binary_sensor:
   # the 13 lines below toggle the main relay on command
 switch:
   - platform: gpio
-    name: ${device_name} switch 1
+    name: 1
     pin: GPIO012
     id: relay_1
 
