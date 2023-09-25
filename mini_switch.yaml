@@ -73,7 +73,7 @@ mqtt:
       then:
         - switch.turn_on:
             id: relay_1
-    - topic: /homeassistant/4ch/UP/switch/down_relay_2/state
+    - topic: /homeassistant/4ch/DOWN/switch/down_relay_2/state
       payload: 'ON'
       then:
         - switch.turn_on:
