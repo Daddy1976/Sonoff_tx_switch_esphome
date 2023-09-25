@@ -58,12 +58,12 @@ mqtt:
   password: ${broker_password}
   discovery_prefix: homeassistant
   on_message:
-    - topic: /homeassistant/mini/$device_name/switch/1
+    - topic: /homeassistant/mini/$device_name/switch/1/state
       payload: 'ON'
       then:
         - switch.turn_on:
             id: relay_1
-    - topic: /homeassistant/mini/$device_name/switch/1
+    - topic: /homeassistant/mini/$device_name/switch/1/state
       payload: 'OFF'
       then:
         - switch.turn_off:
