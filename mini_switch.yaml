@@ -124,7 +124,7 @@ binary_sensor:
   # the 13 lines below toggle the main relay on command
 switch:
   - platform: gpio
-    name: '1'
+    name: $device_name relay 1
     pin: GPIO012
     id: relay_1
 
