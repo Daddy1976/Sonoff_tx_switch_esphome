@@ -12,9 +12,9 @@ substitutions:
   min_run_time: "300"
   min_idle_time: "30"
   # https://esphome.io/components/climate/index.html#base-climate-configuration
-  temp_min: "5"
-  temp_max: "25"
-  temp_step: "0.5"
+  temp_min: "10"
+  temp_max: "28"
+  temp_step: "0.1"
 
   ##### DO NOT CHANGE THIS #####
   addon_climate_cool: "false"
@@ -23,7 +23,7 @@ substitutions:
 
 climate:
   - platform: thermostat
-    name: ${device_name} Thermostat
+    name: Thermostat ${device_name}
     id: thermostat_embedded
     sensor: temp_nspanel
     min_heating_off_time: ${min_off_time}s
@@ -64,7 +64,7 @@ globals:
   - id: addon_climate_friendly_name
     type: std::string
     restore_value: false
-    initial_value: '"${device_name} Thermostat"'
+    initial_value: '"Thermostat ${device_name}"'
 
 script:
   - id: !extend addon_climate_update_page_home
