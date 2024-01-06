@@ -73,7 +73,14 @@ sensor:
     source_id: wifi_signal_db
     name: $device_name WiFi Signal
     filters:
-      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+      - lambda: >
+          int s = min(max(2 * (x + 100.0), 0.0), 100.0);
+          if (s > 85) id(wifi_signal_db).set_icon("mdi:wifi-strength-4");
+            else if (s>65) id(wifi_signal_db).set_icon("mdi:wifi-strength-3");
+            else if (s>30) id(wifi_signal_db).set_icon("mdi:wifi-strength-2");
+            else if (s>10) id(wifi_signal_db).set_icon("mdi:wifi-strength-1");
+            else id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
+          return s;
     unit_of_measurement: "%"
     entity_category: "diagnostic"
 #######################################
