@@ -68,6 +68,14 @@ sensor:
     name: RSSI
     entity_category: "diagnostic"
     update_interval: 30s
+    filters:
+      - lambda: >
+          if (x > -60) id(wifi_signal_db).set_icon("mdi:wifi-strength-4");
+            else if (x > -70) id(wifi_signal_db).set_icon("mdi:wifi-strength-3");
+            else if (x > -80) id(wifi_signal_db).set_icon("mdi:wifi-strength-2");
+            else if (x > -90) id(wifi_signal_db).set_icon("mdi:wifi-strength-1");
+            else id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
+          return x;
   # Reports the WiFi signal strength in %
   - platform: copy
     source_id: wifi_signal_db
@@ -75,11 +83,6 @@ sensor:
     filters:
       - lambda: >
           int s = min(max(2 * (x + 100.0), 0.0), 100.0);
-          if (s > 80) id(wifi_signal_db).set_icon("mdi:wifi-strength-4");
-            else if (s>60) id(wifi_signal_db).set_icon("mdi:wifi-strength-3");
-            else if (s>40) id(wifi_signal_db).set_icon("mdi:wifi-strength-2");
-            else if (s>20) id(wifi_signal_db).set_icon("mdi:wifi-strength-1");
-            else id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
           return s;
     unit_of_measurement: "%"
     entity_category: "diagnostic"
