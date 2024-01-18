@@ -85,7 +85,8 @@ sensor:
             else if (x > -70) id(wifi_signal_db).set_icon("mdi:wifi-strength-3");
             else if (x > -80) id(wifi_signal_db).set_icon("mdi:wifi-strength-2");
             else if (x > -90) id(wifi_signal_db).set_icon("mdi:wifi-strength-1");
-            else id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
+            else if (x > -99) id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
+            else id(wifi_signal_db).set_icon("mdi:wifi-strength-alert-outline");
           return x;
   # Reports the WiFi signal strength in %
   - platform: copy
