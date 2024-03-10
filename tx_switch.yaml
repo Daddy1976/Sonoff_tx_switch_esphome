@@ -42,12 +42,12 @@ logger:
 api:
   on_client_connected:
     - output.esp8266_pwm.set_frequency:
-        id: pwm_output
+        id: blue_led
         frequency: 1000Hz
     - light.turn_on: blue_led_light
   on_client_disconnected:
     - output.esp8266_pwm.set_frequency:
-        id: pwm_output
+        id: blue_led
         frequency: 1Hz
   reboot_timeout: 15min
 
