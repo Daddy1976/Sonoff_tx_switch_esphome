@@ -40,12 +40,12 @@ wifi:
 logger:
   
 api:
-  on_client_connected:
+  on_connected:
     then:
         - output.esp8266_pwm.set_frequency:
             id: blue_led
             frequency: 1000Hz
-  on_client_disconnected:
+  on_disconnected:
     then:
         - output.esp8266_pwm.set_frequency:
             id: blue_led
