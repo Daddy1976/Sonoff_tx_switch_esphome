@@ -194,6 +194,9 @@ script:
           condition:
             api.connected:
           then:
+            - output.esp8266_pwm.set_frequency:
+                id: blue_led
+                frequency: 1Hz
             - output.set_level:
                 id: blue_led
                 level: 25%
