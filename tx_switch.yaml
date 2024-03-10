@@ -41,15 +41,13 @@ logger:
   
 api:
   on_client_connected:
-    then:
-        - output.set_level:
-            id: blue_led
-            level: 50%
+      - output.set_level:
+          id: blue_led
+          level: 50%
   on_client_disconnected:
-    then:
-        - output.set_level:
-            id: blue_led
-            level: 1%
+      - output.set_level:
+          id: blue_led
+          level: 1%
   reboot_timeout: 15min
 
 ota:
