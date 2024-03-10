@@ -103,6 +103,13 @@ text_sensor:
       name: $device_name bssid
 
 binary_sensor:
+  - name: ${device_name} Status
+    platform: status
+    id: api_status
+    on_state:
+      then:
+        - script.execute:
+            id: light_on_connect
   # the 7 lines below define the reset button
   - platform: gpio
     pin:
@@ -178,4 +185,20 @@ light:
     output: blue_led
     id: blue_led_light
     internal: True
+    
+script:
+  - id: light_on_connect
+    mode: restart
+    then:
+      - if:
+          condition:
+            api.connected:
+          then:
+            - output.set_level:
+                id: blue_led
+                level: 50%
+          else:
+            - output.set_level:
+                id: blue_led
+                level: 1%
     
