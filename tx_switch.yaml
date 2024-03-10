@@ -40,12 +40,12 @@ wifi:
 logger:
   
 api:
-  on_connected:
+  on_client_connected:
     then:
         - output.set_level:
             id: blue_led
             level: 50%
-  on_disconnected:
+  on_client_disconnected:
     then:
         - output.set_level:
             id: blue_led
