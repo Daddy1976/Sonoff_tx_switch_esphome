@@ -38,7 +38,7 @@ wifi:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
     - ssid: ${wifi_ssid2}
-      password: ${wifi_password}
+      password: ${wifi_pass}
   passive_scan: True
 
 logger:
@@ -109,7 +109,7 @@ text_sensor:
       name: $device_name bssid
       entity_category: "diagnostic"
     scan_results:
-      name: Scan
+      name: $device_name Scan
       entity_category: "diagnostic"
 
 binary_sensor:
