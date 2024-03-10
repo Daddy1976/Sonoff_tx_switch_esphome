@@ -28,10 +28,10 @@ esphome:
   platform: ESP8266
   board: esp01_1m
 
-#  on_boot:
-#    priority: -10
-#    then:
-#      - light.turn_on: blue_led_light
+  on_boot:
+    priority: -10
+    then:
+      - light.turn_on: blue_led_light
 
 wifi:
   ssid: ${wifi_ssid}
@@ -42,14 +42,14 @@ logger:
 api:
   on_connected:
     then:
-        - output.esp8266_pwm.set_frequency:
+        - output.set_level:
             id: blue_led
-            frequency: 1000Hz
+            level: 50%
   on_disconnected:
     then:
-        - output.esp8266_pwm.set_frequency:
+        - output.set_level:
             id: blue_led
-            frequency: 1Hz
+            level: 1%
   reboot_timeout: 15min
 
 ota:
