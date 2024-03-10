@@ -40,14 +40,17 @@ wifi:
 logger:
   
 api:
-  on_connected:
-      - output.set_level:
-          id: blue_led
-          level: 50%
-  on_disconnected:
-      - output.set_level:
-          id: blue_led
-          level: 1%
+    if:
+        condition:
+            on_connected:
+        then:
+            - output.set_level:
+                id: blue_led
+                level: 50%
+        else:
+            - output.set_level:
+                id: blue_led
+                level: 1%
   reboot_timeout: 15min
 
 ota:
