@@ -34,8 +34,11 @@ esphome:
       - light.turn_on: blue_led_light
 
 wifi:
-  ssid: ${wifi_ssid}
-  password: ${wifi_pass}
+  networks:
+    - ssid: ${wifi_ssid}
+      password: ${wifi_pass}
+    - ssid: ${wifi_ssid2}
+      password: ${wifi_password}
 
 logger:
   
