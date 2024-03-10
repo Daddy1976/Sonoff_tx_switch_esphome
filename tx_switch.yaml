@@ -196,15 +196,9 @@ script:
           then:
             - output.set_level:
                 id: blue_led
-                level: 40%
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1Hz
+                level: 25%
           else:
             - output.set_level:
                 id: blue_led
                 level: 100%
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1Hz
     
