@@ -110,12 +110,12 @@ text_sensor:
     ssid:
       name: $device_name ssid
       entity_category: "diagnostic"
-    bssid:
-      name: $device_name bssid
-      entity_category: "diagnostic"
-    scan_results:
-      name: $device_name Scan
-      entity_category: "diagnostic"
+#    bssid:
+#      name: $device_name bssid
+#      entity_category: "diagnostic"
+#    scan_results:
+#      name: $device_name Scan
+#      entity_category: "diagnostic"
 
 binary_sensor:
   - name: ${device_name} Status
