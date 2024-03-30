@@ -37,9 +37,10 @@ wifi:
   networks:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
-    - ssid: ${wifi_ssid2}
-      password: ${wifi_pass}
-  passive_scan: True
+#    - ssid: ${wifi_ssid2}
+#      password: ${wifi_pass}
+#  passive_scan: True
+  fast_connect: True
 
 logger:
   
