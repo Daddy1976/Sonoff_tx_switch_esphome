@@ -32,9 +32,9 @@ esphome:
     priority: -10
     then:
       - light.turn_on: blue_led_light
-    project:
-      name: "Mark.Sonoff T1EU2C-TX Series"
-      version: "0.1"
+  project:
+    name: "Mark.Sonoff T1EU2C-TX Series"
+    version: "0.1"
 
 wifi:
   networks:
