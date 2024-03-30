@@ -27,6 +27,9 @@ esphome:
   name: ${device_name}
   platform: ESP8266
   board: esp01_1m
+  project:
+    name: "Mark.Sonoff MINIR2 Wi-Fi DIY Smart Switch"
+    version: "0.1"
 
   on_boot:
     priority: -10
