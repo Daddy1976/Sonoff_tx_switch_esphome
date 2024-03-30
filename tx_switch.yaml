@@ -46,6 +46,7 @@ wifi:
   fast_connect: True
 
 logger:
+  level: warn
   
 api:
   reboot_timeout: 15min
