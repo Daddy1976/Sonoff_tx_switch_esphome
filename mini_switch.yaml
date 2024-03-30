@@ -115,8 +115,8 @@ text_sensor:
       name: $device_name ip
     ssid:
       name: $device_name ssid
-    bssid:
-      name: $device_name bssid
+#    bssid:
+#      name: $device_name bssid
 
 binary_sensor:
   # the 7 lines below define the reset button
