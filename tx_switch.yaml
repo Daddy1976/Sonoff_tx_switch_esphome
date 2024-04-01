@@ -52,6 +52,7 @@ api:
   reboot_timeout: 15min
 
 ota:
+  password: !secret ota_password
 
 # the web_server & sensor components can be removed without affecting core functionaility.
 
