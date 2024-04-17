@@ -115,14 +115,13 @@ sensor:
 text_sensor:
   - platform: version
     name: Date
-    category: diagnostic
+    entity_category: "diagnostic"
   - platform: wifi_info
+    entity_category: "diagnostic"
     ip_address:
       name: $device_name ip
-      category: diagnostic
     ssid:
       name: $device_name ssid
-      category: diagnostic
 #    bssid:
 #      name: $device_name bssid
 
