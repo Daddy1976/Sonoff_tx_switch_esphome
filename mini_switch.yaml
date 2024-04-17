@@ -82,6 +82,7 @@ sensor:
   # Uptime sensor
   - platform: uptime
     name: $device_name uptime
+    internal: True
   # WiFi Signal sensor
   - platform: wifi_signal
     id: wifi_signal_db
@@ -114,11 +115,14 @@ sensor:
 text_sensor:
   - platform: version
     name: Date
+    category: diagnostic
   - platform: wifi_info
     ip_address:
       name: $device_name ip
+      category: diagnostic
     ssid:
       name: $device_name ssid
+      category: diagnostic
 #    bssid:
 #      name: $device_name bssid
 
@@ -132,12 +136,12 @@ binary_sensor:
         pullup: true
       inverted: true
     name: "Smart button"
-    on_press:
-      - switch.toggle: relay
-      - mqtt.publish_json:
-          topic: button
-          payload: |-
-              root["key"] = id(relay).state;
+#    on_press:
+#      - switch.toggle: relay
+#      - mqtt.publish_json:
+#          topic: button
+#          payload: |-
+#              root["key"] = id(relay).state;
   - platform: status
     name: ${device_name} Status
 
