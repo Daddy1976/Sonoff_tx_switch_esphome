@@ -42,7 +42,7 @@ wifi:
   fast_connect: True
 
 logger:
-  level: warn
+  level: debug
   
 api:
   reboot_timeout: 15min
@@ -67,16 +67,16 @@ mqtt:
   password: ${broker_password}
   discovery_prefix: homeassistant
   on_message:
-    - topic: /kurenie/mini/switch/relay_1/state
+    - topic: /kurenie/mini/switch/relay/state
       payload: 'ON'
       then:
         - switch.turn_on:
-            id: relay_1
-    - topic: /kurenie/mini/switch/relay_1/state
+            id: relay
+    - topic: /kurenie/mini/switch/relay/state
       payload: 'OFF'
       then:
         - switch.turn_off:
-            id: relay_1
+            id: relay
 
 sensor:
   # Uptime sensor
@@ -133,20 +133,20 @@ binary_sensor:
       inverted: true
     name: "Smart button"
     on_press:
-      - switch.toggle: relay_1
+      - switch.toggle: relay
       - mqtt.publish_json:
           topic: button
           payload: |-
-              root["key"] = id(relay_1).state;
+              root["key"] = id(relay).state;
   - platform: status
     name: ${device_name} Status
 
   # the 13 lines below toggle the main relay on command
 switch:
   - platform: gpio
-    name: Relay 1
+    name: Relay
     pin: GPIO012
-    id: relay_1
+    id: relay
 
 output:
   # the 3 lines below control the Blue LED
