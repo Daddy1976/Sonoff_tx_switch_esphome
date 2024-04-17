@@ -58,25 +58,25 @@ web_server:
     username: !secret web_server_username
     password: !secret web_server_password
 
-mqtt:
-  topic_prefix: /kurenie/mini
-  discovery: false
-  broker: ${broker_ip}
-  port: 1883
-  username: ${broker_user}
-  password: ${broker_password}
-  discovery_prefix: homeassistant
-  on_message:
-    - topic: /kurenie/mini/switch/relay/state
-      payload: 'ON'
-      then:
-        - switch.turn_on:
-            id: relay
-    - topic: /kurenie/mini/switch/relay/state
-      payload: 'OFF'
-      then:
-        - switch.turn_off:
-            id: relay
+#mqtt:
+#  topic_prefix: /kurenie/mini
+#  discovery: false
+#  broker: ${broker_ip}
+#  port: 1883
+#  username: ${broker_user}
+#  password: ${broker_password}
+#  discovery_prefix: homeassistant
+#  on_message:
+#    - topic: /kurenie/mini/switch/relay/state
+#      payload: 'ON'
+#      then:
+#        - switch.turn_on:
+#            id: relay
+#    - topic: /kurenie/mini/switch/relay/state
+#      payload: 'OFF'
+#      then:
+#        - switch.turn_off:
+#            id: relay
 
 sensor:
   # Uptime sensor
