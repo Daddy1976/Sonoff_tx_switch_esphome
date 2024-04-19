@@ -56,8 +56,8 @@ api:
   on_client_disconnected:
     - logger.log:
         format: "API client disconnected!"
-    - script.execute: light_on_connect
         level: warn
+    - script.execute: light_on_connect
   on_client_connected:
     - logger.log:
         format: "API client connected!"
@@ -241,7 +241,7 @@ script:
 #                level: 100%
   - id: api_disonneted
     then:
-      - output.esp8266_pwm.set_frequency
+      - output.esp8266_pwm.set_frequency:
           id: blue_led
           frequency: 8Hz
       - output.set_level:
