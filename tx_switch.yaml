@@ -44,6 +44,9 @@ wifi:
 #      password: ${wifi_pass}
 #  passive_scan: True
   fast_connect: True
+  on_connect:
+    then:
+      - light.turn_on: blue_led_light
 
 logger:
   level: info
