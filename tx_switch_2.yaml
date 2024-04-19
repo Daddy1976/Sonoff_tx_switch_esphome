@@ -36,7 +36,7 @@ esphome:
     name: "Mark.Sonoff T1EU2C-TX Series"
     version: "0.1"
 
-wifi:
+wwifi:
   networks:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
@@ -44,12 +44,24 @@ wifi:
 #      password: ${wifi_pass}
 #  passive_scan: True
   fast_connect: True
+  on_connect:
+    then:
+      - light.turn_on: blue_led_light
 
 logger:
-  level: warn
-
+  level: info
+  
 api:
   reboot_timeout: 15min
+  on_client_disconnected:
+    - logger.log:
+        format: "API client disconnected!"
+        level: warn
+    - script.execute: light_on_connect
+  on_client_connected:
+    - logger.log:
+        format: "API client connected!"
+        level: info
 
 ota:
   password: !secret ota_password
@@ -62,14 +74,14 @@ web_server:
     username: !secret web_server_username
     password: !secret web_server_password
 
-mqtt:
-  topic_prefix: /homeassistant/tx/$device_name
-  discovery: false
-  broker: ${broker_ip}
-  port: 1883
-  username: ${broker_user}
-  password: ${broker_password}
-  discovery_prefix: homeassistant
+#mqtt:
+#  topic_prefix: /homeassistant/tx/$device_name
+#  discovery: false
+#  broker: ${broker_ip}
+#  port: 1883
+#  username: ${broker_user}
+#  password: ${broker_password}
+#  discovery_prefix: homeassistant
 
 sensor:
   # Uptime sensor
@@ -107,6 +119,7 @@ sensor:
 text_sensor:
   - platform: version
     name: Date
+      entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
       name: $device_name ip
@@ -140,10 +153,10 @@ binary_sensor:
     name: "Sonoff TX Touchpad 1"
     on_press:
       - switch.toggle: relay_1
-      - mqtt.publish_json:
-          topic: touchpad1
-          payload: |-
-              root["key"] = id(relay_1).state;
+#      - mqtt.publish_json:
+#          topic: touchpad1
+#          payload: |-
+#              root["key"] = id(relay_1).state;
   - platform: gpio
     pin:
       number: GPIO9
@@ -154,10 +167,10 @@ binary_sensor:
     name: "Sonoff TX Touchpad 2"
     on_press:
       - switch.toggle: relay_2
-      - mqtt.publish_json:
-          topic: touchpad2
-          payload: |-
-              root["key"] = id(relay_2).state;
+#      - mqtt.publish_json:
+#          topic: touchpad2
+#          payload: |-
+#              root["key"] = id(relay_2).state;
 #  - platform: gpio
 #    pin:
 #      number: GPIO10
@@ -226,4 +239,12 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 100%
+  - id: api_disonneted
+    then:
+      - output.esp8266_pwm.set_frequency:
+          id: blue_led
+          frequency: 8Hz
+      - output.set_level:
+          id: blue_led
+          level: 80%
     
