@@ -34,7 +34,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "0.1"
+    version: "0.2"
 
 wwifi:
   networks:
