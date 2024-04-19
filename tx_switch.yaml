@@ -119,6 +119,7 @@ sensor:
 text_sensor:
   - platform: version
     name: Date
+    entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
       name: $device_name ip
