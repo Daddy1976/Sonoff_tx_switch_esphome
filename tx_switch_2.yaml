@@ -95,7 +95,6 @@ sensor:
     update_interval: 30s
     filters:
       - lambda: >
-          
           ESP_LOGI("main", "Value of my sensor: %s", x);
           ESP_LOGI("main", "State: %s", id(wifi_signal_db).state);
           if (x > -60) id(wifi_signal_db).set_icon("mdi:wifi-strength-4");
