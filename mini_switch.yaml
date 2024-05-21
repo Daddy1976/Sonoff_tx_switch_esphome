@@ -29,7 +29,7 @@ esphome:
   board: esp01_1m
   project:
     name: "Mark.Sonoff MINIR2 Wi-Fi DIY Smart Switch"
-    version: "0.2"
+    version: "0.3"
 
   on_boot:
     priority: -10
