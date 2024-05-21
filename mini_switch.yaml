@@ -29,7 +29,7 @@ esphome:
   board: esp01_1m
   project:
     name: "Mark.Sonoff MINIR2 Wi-Fi DIY Smart Switch"
-    version: "0.4"
+    version: "0.5"
 
   on_boot:
     priority: -10
@@ -111,14 +111,6 @@ sensor:
     icon: mdi:chip
     state_class: measurement
     entity_category: "diagnostic"
-  - platform: template
-    name: "ESP Last Reset"
-    lambda: |-
-      int value = ESP.getResetReason();
-      return value;
-    icon: mdi:chip
-    state_class: measurement
-    entity_category: "diagnostic"
     
   # WiFi Signal sensor
   - platform: wifi_signal
@@ -159,6 +151,12 @@ text_sensor:
       name: $device_name ssid
 #    bssid:
 #      name: $device_name bssid
+  - platform: template
+    name: "ESP Last Reset"
+    lambda: return ESP.getResetReason();
+    icon: mdi:chip
+    state_class: measurement
+    entity_category: "diagnostic"
 
 binary_sensor:
   # the 7 lines below define the reset button
