@@ -155,7 +155,6 @@ text_sensor:
     name: "ESP Last Reset"
     lambda: return ESP.getResetReason();
     icon: mdi:chip
-    state_class: measurement
     entity_category: "diagnostic"
 
 binary_sensor:
