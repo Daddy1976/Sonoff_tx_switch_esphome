@@ -148,6 +148,7 @@ switch:
     name: Relay
     pin: GPIO012
     id: relay
+    internal: True
 
 output:
   # the 3 lines below control the Blue LED
