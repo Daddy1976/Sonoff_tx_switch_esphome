@@ -87,6 +87,33 @@ sensor:
   # Uptime sensor
   - platform: uptime
     name: $device_name uptime
+  - platform: template
+    name: "ESP Free Heap"
+    lambda: |-
+      int value = ESP.getFreeHeap();
+      return value / 1024.0;
+    unit_of_measurement: "kB"
+    icon: mdi:chip
+    state_class: measurement
+    entity_category: "diagnostic"
+  - platform: template
+    name: "ESP Sketch Size"
+    lambda: |-
+      int value = ESP.getSketchSize();
+      return value / 1024.0;
+    unit_of_measurement: "kB"
+    icon: mdi:chip
+    state_class: measurement
+    entity_category: "diagnostic"
+  - platform: template
+    name: "ESP Fragmentation"
+    lambda: |-
+      int value = ESP.getHeapFragmentation();
+      return value;
+    unit_of_measurement: "%"
+    icon: mdi:chip
+    state_class: measurement
+    entity_category: "diagnostic"
   # WiFi Signal sensor
   - platform: wifi_signal
     id: wifi_signal_db
