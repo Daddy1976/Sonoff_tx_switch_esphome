@@ -73,6 +73,8 @@ web_server:
   auth:
     username: !secret web_server_username
     password: !secret web_server_password
+  js_url: "https://oi.esphome.io/v3/www.js"
+  version: 3
 
 #mqtt:
 #  topic_prefix: /homeassistant/tx/$device_name
