@@ -34,7 +34,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "0.5"
+    version: "0.6"
 
 wifi:
   networks:
@@ -64,7 +64,8 @@ api:
         level: info
 
 ota:
-  password: !secret ota_password
+  - password: !secret ota_password
+    platform: esphome
 
 # the web_server & sensor components can be removed without affecting core functionaility.
 
