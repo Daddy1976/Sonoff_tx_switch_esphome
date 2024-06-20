@@ -64,8 +64,8 @@ api:
         level: info
 
 ota:
-  - platform: esphome
-    password: !secret ota_password
+  - password: !secret ota_password
+    platform: esphome
 
 # the web_server & sensor components can be removed without affecting core functionaility.
 
