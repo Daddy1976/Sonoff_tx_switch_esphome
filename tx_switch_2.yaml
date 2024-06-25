@@ -34,7 +34,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "0.7"
+    version: "0.8"
 
 wifi:
   networks:
@@ -69,20 +69,23 @@ ota:
     on_begin:
       then:
         - logger.log: "OTA start"
+          level: info
     on_progress:
       then:
         - logger.log:
             format: "OTA progress %0.1f%%"
             args: ["x"]
+            level: info
     on_end:
       then:
         - logger.log: "OTA end"
+          level: info
     on_error:
       then:
         - logger.log:
             format: "OTA update error %d"
             args: ["x"]
-
+            level: error
 # the web_server & sensor components can be removed without affecting core functionaility.
 
 web_server:
