@@ -49,7 +49,7 @@ wifi:
       - light.turn_on: blue_led_light
 
 logger:
-  level: info
+  level: debug
   
 api:
   reboot_timeout: 15min
@@ -69,23 +69,19 @@ ota:
     on_begin:
       then:
         - logger.log: "OTA start"
-          level: info
     on_progress:
       then:
         - logger.log:
             format: "OTA progress %0.1f%%"
             args: ["x"]
-            level: info
     on_end:
       then:
         - logger.log: "OTA end"
-          level: info
     on_error:
       then:
         - logger.log:
             format: "OTA update error %d"
             args: ["x"]
-            level: error
 # the web_server & sensor components can be removed without affecting core functionaility.
 
 web_server:
