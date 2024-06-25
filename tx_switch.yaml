@@ -69,7 +69,6 @@ ota:
     on_begin:
       then:
         - logger.log: "OTA start"
-          level: info
     on_progress:
       then:
         - logger.log:
@@ -79,13 +78,12 @@ ota:
     on_end:
       then:
         - logger.log: "OTA end"
-          level: info
     on_error:
       then:
         - logger.log:
             format: "OTA update error %d"
             args: ["x"]
-            level: error
+            level: warn
 
 # the web_server & sensor components can be removed without affecting core functionaility.
 
