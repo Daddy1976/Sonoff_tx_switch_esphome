@@ -88,7 +88,6 @@ ota:
             format: "OTA update error %d"
             args: ["x"]
             level: warn
-
 # the web_server & sensor components can be removed without affecting core functionaility.
 
 web_server:
