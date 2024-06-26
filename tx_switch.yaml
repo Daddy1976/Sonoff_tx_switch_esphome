@@ -68,7 +68,9 @@ ota:
     platform: esphome
     on_begin:
       then:
-        - logger.log: "OTA start"
+        - logger.log:
+            format: "OTA start"
+            level: info
     on_progress:
       then:
         - logger.log:
@@ -77,7 +79,9 @@ ota:
             level: info
     on_end:
       then:
-        - logger.log: "OTA end"
+        - logger.log:
+            format: "OTA end"
+            level: info
     on_error:
       then:
         - logger.log:
