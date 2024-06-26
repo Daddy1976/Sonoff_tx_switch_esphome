@@ -29,7 +29,7 @@ esphome:
   board: esp01_1m
   project:
     name: "Mark.Sonoff MINIR2 Wi-Fi DIY Smart Switch"
-    version: "0.7"
+    version: "0.8"
 
   on_boot:
     priority: -10
@@ -50,6 +50,28 @@ api:
 ota:
   - password: !secret ota_password
     platform: esphome
+    on_begin:
+      then:
+        - logger.log:
+            format: "OTA start"
+            level: info
+    on_progress:
+      then:
+        - logger.log:
+            format: "OTA progress %0.1f%%"
+            args: ["x"]
+            level: info
+    on_end:
+      then:
+        - logger.log:
+            format: "OTA end"
+            level: info
+    on_error:
+      then:
+        - logger.log:
+            format: "OTA update error %d"
+            args: ["x"]
+            level: warn
 
 # the web_server & sensor components can be removed without affecting core functionaility.
 
