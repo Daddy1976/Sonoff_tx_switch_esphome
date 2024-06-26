@@ -34,7 +34,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "0.8"
+    version: "0.9"
 
 wifi:
   networks:
@@ -68,7 +68,9 @@ ota:
     platform: esphome
     on_begin:
       then:
-        - logger.log: "OTA start"
+        - logger.log:
+            format: "OTA start"
+            level: info
     on_progress:
       then:
         - logger.log:
@@ -77,7 +79,9 @@ ota:
             level: info
     on_end:
       then:
-        - logger.log: "OTA end"
+        - logger.log:
+            format: "OTA end"
+            level: info
     on_error:
       then:
         - logger.log:
