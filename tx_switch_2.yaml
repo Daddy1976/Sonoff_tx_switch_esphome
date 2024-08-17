@@ -34,7 +34,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "0.9"
+    version: "1.0"
 
 wifi:
   networks:
@@ -145,26 +145,26 @@ sensor:
     name: RSSI
     entity_category: "diagnostic"
     update_interval: 30s
-    filters:
-      - lambda: >
-          ESP_LOGI("Wifi", "Value : %f", x);
-          if (x > -60) id(wifi_signal_db).set_icon("mdi:wifi-strength-4");
-          else if (x > -70) id(wifi_signal_db).set_icon("mdi:wifi-strength-3");
-          else if (x > -80) id(wifi_signal_db).set_icon("mdi:wifi-strength-2");
-          else if (x > -90) id(wifi_signal_db).set_icon("mdi:wifi-strength-1");
-          else if (x > -99) id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
-          else id(wifi_signal_db).set_icon("mdi:wifi-strength-alert-outline");
-          return x;
-  # Reports the WiFi signal strength in %
-  - platform: copy
-    source_id: wifi_signal_db
-    name: $device_name WiFi Signal
-    filters:
-      - lambda: >
-          int s = min(max(2 * (x + 100.0), 0.0), 100.0);
-          return s;
-    unit_of_measurement: "%"
-    entity_category: "diagnostic"
+    icon: mdi:wifi
+#    filters:
+#      - lambda: >
+#          if (x > -60) id(wifi_signal_db).set_icon("mdi:wifi-strength-4");
+#          else if (x > -70) id(wifi_signal_db).set_icon("mdi:wifi-strength-3");
+#          else if (x > -80) id(wifi_signal_db).set_icon("mdi:wifi-strength-2");
+#          else if (x > -90) id(wifi_signal_db).set_icon("mdi:wifi-strength-1");
+#          else if (x > -99) id(wifi_signal_db).set_icon("mdi:wifi-strength-outline");
+#          else id(wifi_signal_db).set_icon("mdi:wifi-strength-alert-outline");
+#          return x;
+# Reports the WiFi signal strength in %
+#    source_id: wifi_signal_db
+#  - platform: copy
+#    name: $device_name WiFi Signal
+#    filters:
+#      - lambda: >
+#          int s = min(max(2 * (x + 100.0), 0.0), 100.0);
+#          return s;
+#    unit_of_measurement: "%"
+#    entity_category: "diagnostic"
 #######################################
 # Device specific Config Begins Below #
 #######################################
