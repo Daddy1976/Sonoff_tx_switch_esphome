@@ -34,7 +34,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "1.0"
+    version: "1.1"
 
 wifi:
   networks:
@@ -57,11 +57,12 @@ api:
     - logger.log:
         format: "API client disconnected!"
         level: warn
-    - script.execute: light_on_connect
+    - script.execute: light_on_disconnect
   on_client_connected:
     - logger.log:
         format: "API client connected!"
         level: info
+    - script.execute: light_on_connect
 
 ota:
   - password: !secret ota_password
@@ -275,29 +276,19 @@ script:
   - id: light_on_connect
     mode: restart
     then:
-      - if:
-          condition:
-            api.connected:
-          then:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1000Hz
-            - output.set_level:
-                id: blue_led
-                level: 25%
-          else:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1Hz
-            - output.set_level:
-                id: blue_led
-                level: 100%
-  - id: api_disonneted
+      - output.esp8266_pwm.set_frequency:
+          id: blue_led
+          frequency: 1000Hz
+      - output.set_level:
+          id: blue_led
+          level: 20%
+  - id: light_on_disconnect
+    mode: restart
     then:
       - output.esp8266_pwm.set_frequency:
           id: blue_led
-          frequency: 8Hz
+          frequency: 1Hz
       - output.set_level:
           id: blue_led
-          level: 80%
+          level: 90%
     
