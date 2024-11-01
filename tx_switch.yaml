@@ -57,11 +57,12 @@ api:
     - logger.log:
         format: "API client disconnected!"
         level: warn
-    - script.execute: light_on_connect
+    - script.execute: light_on_disconnect
   on_client_connected:
     - logger.log:
         format: "API client connected!"
         level: info
+    - script.execute: light_on_connect
 
 ota:
   - password: !secret ota_password
@@ -292,11 +293,12 @@ script:
 #            - output.set_level:
 #                id: blue_led
 #                level: 100%
-  - id: api_disonneted
+  - id: light_on_disconnect
+    mode: restart
     then:
       - output.esp8266_pwm.set_frequency:
           id: blue_led
-          frequency: 8Hz
+          frequency: 1Hz
       - output.set_level:
           id: blue_led
           level: 80%
