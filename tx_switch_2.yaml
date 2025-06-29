@@ -131,11 +131,11 @@ text_sensor:
     entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
-      name: $device_name ip
+      name: IP
       entity_category: "diagnostic"
       icon: mdi:ip-network
     ssid:
-      name: $device_name ssid
+      name: SSID
       entity_category: "diagnostic"
       icon: mdi:access-point
     bssid:
@@ -153,7 +153,7 @@ text_sensor:
 #      entity_category: "diagnostic"
 
 binary_sensor:
-  - name: ${device_name} Status
+  - name: Status
     platform: status
     on_state:
       then:
