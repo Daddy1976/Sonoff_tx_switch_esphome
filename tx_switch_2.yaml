@@ -113,7 +113,7 @@ web_server:
 sensor:
   # Uptime sensor
   - platform: uptime
-    name: $device_name uptime
+    name: Uptime
   # WiFi Signal sensor
   - platform: wifi_signal
     id: wifi_signal_db
@@ -133,9 +133,11 @@ text_sensor:
     ip_address:
       name: $device_name ip
       entity_category: "diagnostic"
+      icon: mdi:ip-network
     ssid:
       name: $device_name ssid
       entity_category: "diagnostic"
+      icon: mdi:access-point
     bssid:
       name: "Connected"
       filters:
@@ -144,7 +146,7 @@ text_sensor:
           - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
 
       entity_category: "diagnostic"
-      icon: "mdi:router-wireless"
+      icon: mdi:router-wireless
 
 #    scan_results:
 #      name: $device_name Scan
@@ -153,11 +155,11 @@ text_sensor:
 binary_sensor:
   - name: ${device_name} Status
     platform: status
-    id: api_status
     on_state:
       then:
         - script.execute:
             id: light_on_connect
+    icon: mdi:api
   # the 7 lines below define the reset button
   - platform: gpio
     pin:
@@ -169,6 +171,7 @@ binary_sensor:
     name: "Sonoff TX Touchpad 1"
     on_press:
       - switch.toggle: relay_1
+    icon: mdi:gesture-tap-button
 #      - mqtt.publish_json:
 #          topic: touchpad1
 #          payload: |-
@@ -183,6 +186,7 @@ binary_sensor:
     name: "Sonoff TX Touchpad 2"
     on_press:
       - switch.toggle: relay_2
+    icon: mdi:gesture-tap-button
 #      - mqtt.publish_json:
 #          topic: touchpad2
 #          payload: |-
@@ -201,8 +205,6 @@ binary_sensor:
 #          topic: touchpad3
 #          payload: |-
 #              root["key"] = id(relay_3).state;
-  - platform: status
-    name: ${device_name} Status
 
   # the 13 lines below toggle the main relay on command
 switch:
@@ -210,10 +212,12 @@ switch:
     name: ${device_name} switch 1
     pin: GPIO012
     id: relay_1
+    icon: mdi:electric-switch
   - platform: gpio
     name: ${device_name} switch 2
     pin: GPIO5
     id: relay_2
+    icon: mdi:electric-switch
 #  - platform: gpio
 #    name: ${device_name} switch 3
 #    pin: GPIO4
@@ -229,10 +233,11 @@ output:
 light:
   # the 4 lines below define the Blue LED light on Sonoff Mini, to expose in HomeAssistant remove line "internal: true"
   - platform: monochromatic
-    name: ${device_name}_blueled
+    name: "Blue LED"
     output: blue_led
     id: blue_led_light
     internal: True
+    icon: mdi:led-on
     
     
 script:
@@ -249,4 +254,11 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 20%
+          else:
+            - output.esp8266_pwm.set_frequency:
+                id: blue_led
+                frequency: 1Hz
+            - output.set_level:
+                id: blue_led
+                level: 100%
     

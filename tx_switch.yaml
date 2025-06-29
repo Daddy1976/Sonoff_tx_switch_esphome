@@ -113,7 +113,7 @@ web_server:
 sensor:
   # Uptime sensor
   - platform: uptime
-    name: uptime
+    name: Uptime
   # WiFi Signal sensor
   - platform: wifi_signal
     id: wifi_signal_db
