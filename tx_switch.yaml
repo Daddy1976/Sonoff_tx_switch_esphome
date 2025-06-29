@@ -159,6 +159,7 @@ binary_sensor:
       then:
         - script.execute:
             id: light_on_connect
+    icon: mdi:api
   # the 7 lines below define the reset button
   - platform: gpio
     pin:
