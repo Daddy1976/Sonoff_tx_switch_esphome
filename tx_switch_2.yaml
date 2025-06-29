@@ -33,7 +33,7 @@ esphome:
       - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "1.4"
+    version: "1.5"
 
 esp8266:
   board: esp01_1m
