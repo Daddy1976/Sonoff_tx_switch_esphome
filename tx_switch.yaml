@@ -30,7 +30,7 @@ esphome:
   on_boot:
     priority: -10
     then:
-      - light.turn_on: blue_led_light
+      - script.execute: light_on_connect
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
     version: "1.5"
@@ -46,9 +46,9 @@ wifi:
 #      password: ${wifi_pass}
 #  passive_scan: True
   fast_connect: True
-  on_connect:
-    then:
-      - light.turn_on: blue_led_light
+#  on_connect:
+#    then:
+#      - light.turn_on: blue_led_light
 
 logger:
   level: info
