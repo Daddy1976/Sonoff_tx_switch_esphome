@@ -80,6 +80,46 @@ sensor:
     name: RSSI
     update_interval: 30s
 
+  # -------------------------------
+  # PREVÁDZKOVÝ ČAS RELÉ 1
+  # -------------------------------
+
+  # Toto generuje hodnotu 1 keď je ON, 0 keď je OFF
+  - platform: template
+    id: relay_1_state_numeric
+    internal: true
+    update_interval: 1s
+    lambda: |-
+      return id(relay_1).state ? 1.0 : 0.0;
+
+  # Celkový čas v hodinách
+  - platform: integration
+    name: "Relay 1 Runtime Total"
+    sensor: relay_1_state_numeric
+    time_unit: h
+    id: relay_1_runtime_total
+
+  # Denný čas v minútach (reset o polnoci)
+  - platform: integration
+    name: "Relay 1 Runtime Today"
+    sensor: relay_1_state_numeric
+    time_unit: min
+    id: relay_1_runtime_today
+    restore: false
+
+time:
+  - platform: sntp
+    id: sntp_time
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 0
+        then:
+          # Reset denných hodín
+          - lambda: |-
+              id(relay_1_runtime_today).reset();
+
+
 text_sensor:
   - platform: version
     name: Date
