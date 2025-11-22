@@ -26,9 +26,6 @@
 
 esphome:
   name: ${device_name}
-  project:
-    name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "2.0"
 
   on_boot:
     priority: -100
