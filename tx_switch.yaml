@@ -28,14 +28,12 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "2.1"
+    version: "2.2"
 
   on_boot:
     priority: -100
     then:
       - script.execute: update_led_state
-
-
 
 esp8266:
   board: esp01_1m
@@ -47,6 +45,7 @@ wifi:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
   fast_connect: True
+
   on_connect:
     - script.execute: update_led_state
   on_disconnect:
@@ -65,38 +64,40 @@ api:
 ota:
   platform: esphome
   password: !secret ota_password
+
   on_begin:
     then:
-      - logger.log:
-          format: "OTA start"
-          level: info
+      - logger.log: "OTA start"
+
   on_progress:
     then:
       - logger.log:
           format: "OTA progress %0.1f%%"
           args: ["x"]
-          level: info
+
   on_end:
     then:
-      - logger.log:
-          format: "OTA end"
-          level: info
+      - logger.log: "OTA end"
+
   on_error:
     then:
       - logger.log:
           format: "OTA update error %d"
           args: ["x"]
-          level: warn
+
+web_server:
+  port: 80
+  auth:
+    username: !secret web_server_username
+    password: !secret web_server_password
+  js_url: "https://oi.esphome.io/v3/www.js"
+  version: 3
+  include_internal: True
 
 
-#web_server:
-#  port: 80
-#  auth:
-#    username: !secret web_server_username
-#    password: !secret web_server_password
-#  js_url: "https://oi.esphome.io/v3/www.js"
-#  version: 3
-#  include_internal: True
+###########################
+# S E N Z O R Y
+###########################
 
 sensor:
   - platform: uptime
@@ -108,10 +109,9 @@ sensor:
     update_interval: 30s
 
   # -------------------------------
-  # PREVÁDZKOVÝ ČAS RELÉ 1
+  # PREVÁDZKOVÝ ČAS RELÉ 1 (hodiny / minúty)
   # -------------------------------
 
-  # Toto generuje hodnotu 1 keď je ON, 0 keď je OFF
   - platform: template
     id: relay_1_state_numeric
     internal: true
@@ -119,14 +119,12 @@ sensor:
     lambda: |-
       return id(relay_1).state ? 1.0 : 0.0;
 
-  # Celkový čas v hodinách
   - platform: integration
     name: "Relay 1 Runtime Total"
     sensor: relay_1_state_numeric
     time_unit: h
     id: relay_1_runtime_total
 
-  # Denný čas v minútach (reset o polnoci)
   - platform: integration
     name: "Relay 1 Runtime Today"
     sensor: relay_1_state_numeric
@@ -134,22 +132,32 @@ sensor:
     id: relay_1_runtime_today
     restore: false
 
+
+###########################
+# Č A S
+###########################
+
 time:
   - platform: sntp
     id: sntp_time
     on_time:
+      # reset denneho runtime o polnoci
       - seconds: 0
         minutes: 0
         hours: 0
         then:
-          # Reset denných hodín
           - lambda: |-
               id(relay_1_runtime_today).reset();
 
 
+###########################
+# T E X T O V É  S E N Z O R Y
+###########################
+
 text_sensor:
   - platform: version
     name: Date
+
   - platform: wifi_info
     ip_address:
       name: IP
@@ -157,6 +165,11 @@ text_sensor:
       name: SSID
     bssid:
       name: Connected AP
+
+
+###########################
+# B I N Á R N E  S E N Z O R Y
+###########################
 
 binary_sensor:
   - name: Status
@@ -176,11 +189,21 @@ binary_sensor:
       - script.execute: led_flash
       - switch.toggle: relay_1
 
+
+###########################
+# R E L É
+###########################
+
 switch:
   - platform: gpio
     name: ${device_name} switch 1
     pin: GPIO012
     id: relay_1
+
+
+###########################
+# L E D  W M  &  L I G H T
+###########################
 
 output:
   - platform: esp8266_pwm
@@ -196,9 +219,14 @@ light:
     output: blue_led
     internal: True
 
+
+###########################
+# S K R I P T Y
+###########################
+
 script:
 
-  # ⚡ krátke prebliknutie pri stlačení tlačidla
+  # Krátke prebliknutie
   - id: led_flash
     then:
       - output.set_level:
@@ -207,30 +235,31 @@ script:
       - delay: 150ms
       - script.execute: update_led_state
 
-  # 🟦 hlavná logika LED stavového systému
+  # Riadenie hlavného LED stavu
   - id: update_led_state
     mode: restart
     then:
       - if:
-          condition:
-            wifi.connected:
+          condition: wifi.connected
           then:
+            # WIFI OK
             - if:
-                condition:
-                  api.connected:
+                condition: api.connected
                 then:
-                  # WIFI OK + API OK → jemné svetlo
+                  # API OK → jemné svetlo
+                  - script.stop: led_breath
+                  - script.stop: led_fast_blink
                   - output.set_level:
                       id: blue_led
                       level: 20%
                 else:
-                  # WIFI OK + API OFF → breathing efekt
+                  # API OFF → breathing
                   - script.execute: led_breath
           else:
             # WIFI OFF → rýchle blikanie
             - script.execute: led_fast_blink
 
-  # ✨ breathing efekt pri HomeAssistant OFF
+  # Breathing LED – zastaví sa keď API príde online
   - id: led_breath
     mode: restart
     then:
@@ -245,13 +274,9 @@ script:
                 level: 10%
             - delay: 500ms
 
-            # okamžite kontrolujeme, či sa API nepripojilo
             - if:
-                condition:
-                  api.connected
+                condition: api.connected
                 then:
-                  - script.stop: led_breath
-                  - script.execute: update_led_state
                   - break
 
             - output.set_level:
@@ -260,22 +285,17 @@ script:
             - delay: 500ms
 
             - if:
-                condition:
-                  api.connected
+                condition: api.connected
                 then:
-                  - script.stop: led_breath
-                  - script.execute: update_led_state
                   - break
 
-
-  # 🚨 rýchle blikanie pri strate WiFi
+  # Rýchle blikanie pri strate WiFi
   - id: led_fast_blink
     mode: restart
     then:
       - while:
           condition:
-            not:
-              wifi.connected:
+            not: wifi.connected
           then:
             - output.set_level:
                 id: blue_led
