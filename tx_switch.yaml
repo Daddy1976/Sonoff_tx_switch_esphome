@@ -23,7 +23,6 @@
 #           refresh: 300s
         
 
-
 esphome:
   name: ${device_name}
   project:
@@ -44,7 +43,7 @@ wifi:
   networks:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
-  fast_connect: True
+  fast_connect: true
 
   on_connect:
     - script.execute: update_led_state
@@ -52,7 +51,7 @@ wifi:
     - script.execute: update_led_state
 
 logger:
-    level: INFO
+  level: INFO
 
 api:
   reboot_timeout: 15min
@@ -92,28 +91,25 @@ web_server:
     password: !secret web_server_password
   js_url: "https://oi.esphome.io/v3/www.js"
   version: 3
-  include_internal: True
+  include_internal: true
 
 
-###########################
+###########################################
 # S E N Z O R Y
-###########################
+###########################################
 
 sensor:
   - platform: uptime
     name: Uptime
-  
+
   - platform: wifi_signal
     id: wifi_signal_db
     name: RSSI
-    entity_category: "diagnostic"
     update_interval: 30s
+    entity_category: "diagnostic"
     icon: mdi:wifi
 
-  # -------------------------------
-  # PREVÁDZKOVÝ ČAS RELÉ 1 (hodiny / minúty)
-  # -------------------------------
-
+  # PREVÁDZKOVÝ ČAS RELÉ 1
   - platform: template
     id: relay_1_state_numeric
     internal: true
@@ -126,24 +122,24 @@ sensor:
     sensor: relay_1_state_numeric
     time_unit: h
     id: relay_1_runtime_total
+    restore: true
 
   - platform: integration
     name: "Relay 1 Runtime Today"
     sensor: relay_1_state_numeric
     time_unit: min
     id: relay_1_runtime_today
-    restore: false
+    restore: true  # OPRAVA — aby bola entita dostupná v HA hneď
 
 
-###########################
-# Č A S
-###########################
+###########################################
+# Č A S – reset denného runtime
+###########################################
 
 time:
   - platform: sntp
     id: sntp_time
     on_time:
-      # reset denneho runtime o polnoci
       - seconds: 0
         minutes: 0
         hours: 0
@@ -152,13 +148,13 @@ time:
               id(relay_1_runtime_today).reset();
 
 
-###########################
-# T E X T O V É  S E N Z O R Y
-###########################
+###########################################
+# T E X T  S E N Z O R Y
+###########################################
 
 text_sensor:
   - platform: version
-    name: Date
+    name: ESP Version
     entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
@@ -176,17 +172,14 @@ text_sensor:
           - "48:8F:5A:17:5B:DD -> AP strecha 2ghz"
           - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
 
-      entity_category: "diagnostic"
-      icon: mdi:router-wireless
 
-
-###########################
+###########################################
 # B I N Á R N E  S E N Z O R Y
-###########################
+###########################################
 
 binary_sensor:
-  - name: Status
-    platform: status
+  - platform: status
+    name: Status
     on_state:
       - script.execute: update_led_state
 
@@ -203,9 +196,9 @@ binary_sensor:
       - switch.toggle: relay_1
 
 
-###########################
+###########################################
 # R E L É
-###########################
+###########################################
 
 switch:
   - platform: gpio
@@ -215,15 +208,15 @@ switch:
     icon: mdi:electric-switch
 
 
-###########################
-# L E D  W M  &  L I G H T
-###########################
+###########################################
+# L E D  &  W M
+###########################################
 
 output:
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
-    inverted: True
+    inverted: true
     frequency: 1000 Hz
 
 light:
@@ -231,16 +224,16 @@ light:
     id: blue_led_light
     name: Blue LED
     output: blue_led
-    internal: True
+    internal: true
 
 
-###########################
+###########################################
 # S K R I P T Y
-###########################
+###########################################
 
 script:
 
-  # Krátke prebliknutie
+  # 1) Krátke prebliknutie
   - id: led_flash
     then:
       - output.set_level:
@@ -249,31 +242,30 @@ script:
       - delay: 150ms
       - script.execute: update_led_state
 
-  # Riadenie hlavného LED stavu
+
+  # 2) Riadi hlavnú LED logiku
   - id: update_led_state
     mode: restart
     then:
+      - script.stop: led_breath
+      - script.stop: led_fast_blink
+
       - if:
           condition: wifi.connected
           then:
-            # WIFI OK
             - if:
                 condition: api.connected
                 then:
-                  # API OK → jemné svetlo
-                  - script.stop: led_breath
-                  - script.stop: led_fast_blink
                   - output.set_level:
                       id: blue_led
-                      level: 20%
+                      level: 15%
                 else:
-                  # API OFF → breathing
                   - script.execute: led_breath
           else:
-            # WIFI OFF → rýchle blikanie
             - script.execute: led_fast_blink
 
-  # Breathing LED – zastaví sa keď API príde online
+
+  # 3) Breathing režim pri WiFi OK a API offline
   - id: led_breath
     mode: restart
     then:
@@ -287,19 +279,13 @@ script:
                 id: blue_led
                 level: 10%
             - delay: 500ms
-
-            - if:
-                condition: api.connected
-                then:
-                  - script.stop: led_breath
-                  - script.execute: update_led_state
-
             - output.set_level:
                 id: blue_led
                 level: 30%
             - delay: 500ms
 
-  # Rýchle blikanie pri strate WiFi
+
+  # 4) Rýchle blikanie pri strate WiFi
   - id: led_fast_blink
     mode: restart
     then:
@@ -309,7 +295,7 @@ script:
           then:
             - output.set_level:
                 id: blue_led
-                level: 100%
+                level: 70%
             - delay: 200ms
             - output.set_level:
                 id: blue_led
