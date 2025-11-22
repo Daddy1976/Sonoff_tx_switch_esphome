@@ -236,16 +236,37 @@ script:
     then:
       - while:
           condition:
-            wifi.connected
+            and:
+              - wifi.connected
+              - not: api.connected
           then:
             - output.set_level:
                 id: blue_led
                 level: 10%
             - delay: 500ms
+
+            # okamžite kontrolujeme, či sa API nepripojilo
+            - if:
+                condition:
+                  api.connected
+                then:
+                  - script.stop: led_breath
+                  - script.execute: update_led_state
+                  - break
+
             - output.set_level:
                 id: blue_led
                 level: 30%
             - delay: 500ms
+
+            - if:
+                condition:
+                  api.connected
+                then:
+                  - script.stop: led_breath
+                  - script.execute: update_led_state
+                  - break
+
 
   # 🚨 rýchle blikanie pri strate WiFi
   - id: led_fast_blink
