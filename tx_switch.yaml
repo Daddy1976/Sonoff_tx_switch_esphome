@@ -53,6 +53,7 @@ wifi:
     - script.execute: update_led_state
 
 logger:
+    level: INFO
 
 api:
   reboot_timeout: 15min
