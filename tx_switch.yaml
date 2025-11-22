@@ -1,102 +1,24 @@
-#
-#   Sonoff-TX-switch.yaml 3 Relay support
-#
-#
-#   Created by Marek Halma on 12/08/2023.
-#
-#   Add new file .yaml and copy this stricture
-
-#   substitutions:
-#
-#       device_name: "test"
-#       wifi_ssid: !secret wifi_ssid
-#       wifi_pass: !secret wifi_password
-#       broker_ip: "#BROKER_IP#" my broker is CERBO GX Victron or Homeassistant with Mosquitto
-#       broker_user: !secret user
-#       broker_password: !secret password
-#
-#   packages:
-#       remote_package:
-#           url: https://github.com/Daddy1976/Sonoff_tx_switch_esphome
-#           ref: main
-#           files: [tx_switch.yaml]
-#           refresh: 300s
-        
-
 esphome:
-  name: ${device_name}
-  project:
-    name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "2.2"
-
-  on_boot:
-    priority: -100
-    then:
-      - script.execute: update_led_state
+  name: terasa
+  friendly_name: Terasa
 
 esp8266:
   board: esp01_1m
-  framework:
-    version: recommended
 
 wifi:
-  networks:
-    - ssid: ${wifi_ssid}
-      password: ${wifi_pass}
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
   fast_connect: true
 
-  on_connect:
-    - script.execute: update_led_state
-  on_disconnect:
-    - script.execute: update_led_state
-
-logger:
-  level: DEBUG
-
 api:
-  reboot_timeout: 15min
-  on_client_connected:
-    - script.execute: update_led_state
-  on_client_disconnected:
-    - script.execute: update_led_state
 
 ota:
-  platform: esphome
   password: !secret ota_password
 
-  on_begin:
-    then:
-      - logger.log: "OTA start"
-
-  on_progress:
-    then:
-      - logger.log:
-          format: "OTA progress %0.1f%%"
-          args: ["x"]
-
-  on_end:
-    then:
-      - logger.log: "OTA end"
-
-  on_error:
-    then:
-      - logger.log:
-          format: "OTA update error %d"
-          args: ["x"]
+logger:
 
 web_server:
   port: 80
-  auth:
-    username: !secret web_server_username
-    password: !secret web_server_password
-  js_url: "https://oi.esphome.io/v3/www.js"
-  version: 3
-  include_internal: true
-
-
-###########################################
-# Č A S – reset denného runtime
-###########################################
 
 time:
   - platform: sntp
@@ -109,29 +31,20 @@ time:
           - lambda: |-
               id(relay_1_runtime_today).reset();
 
-
-###########################################
-# S E N Z O R Y
-###########################################
-
 sensor:
   - platform: uptime
-    name: Uptime
+    name: "Uptime"
 
   - platform: wifi_signal
-    id: wifi_signal_db
-    name: RSSI
+    name: "RSSI"
     update_interval: 30s
-    entity_category: "diagnostic"
-    icon: mdi:wifi
 
-  # PREVÁDZKOVÝ ČAS RELÉ 1
   - platform: template
     id: relay_1_state_numeric
     internal: true
     update_interval: 1s
     lambda: |-
-      return id(relay_1).state ? 1.0 : 0.0;
+      return id(relay_1).state ? 1 : 0;
 
   - platform: integration
     name: "Relay 1 Runtime Total"
@@ -145,159 +58,42 @@ sensor:
     sensor: relay_1_state_numeric
     time_unit: min
     id: relay_1_runtime_today
-    restore: true  # OPRAVA — aby bola entita dostupná v HA hneď
-
-
-###########################################
-# T E X T  S E N Z O R Y
-###########################################
+    restore: true
 
 text_sensor:
   - platform: version
-    name: ESP Version
-    entity_category: "diagnostic"
-  - platform: wifi_info
-    ip_address:
-      name: IP
-      entity_category: "diagnostic"
-      icon: mdi:ip-network
-    ssid:
-      name: SSID
-      entity_category: "diagnostic"
-      icon: mdi:access-point
-    bssid:
-      name: "Connected"
-      filters:
-        substitute:
-          - "48:8F:5A:17:5B:DD -> AP strecha 2ghz"
-          - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
-
-
-###########################################
-# B I N Á R N E  S E N Z O R Y
-###########################################
+    name: "ESPHome Version"
 
 binary_sensor:
   - platform: status
-    name: Status
-    on_state:
-      - script.execute: update_led_state
+    name: "Status"
 
   - platform: gpio
+    name: "Touchpad 1"
     pin:
       number: GPIO0
+      inverted: true
       mode:
         input: true
         pullup: true
-      inverted: true
-    name: "Sonoff TX Touchpad 1"
     on_press:
-      - script.execute: led_flash
       - switch.toggle: relay_1
-
-
-###########################################
-# R E L É
-###########################################
 
 switch:
   - platform: gpio
-    name: ${device_name} switch 1
-    pin: GPIO012
+    name: "Terasa Relay 1"
+    pin: GPIO12
     id: relay_1
-    icon: mdi:electric-switch
-
-
-###########################################
-# L E D  &  W M
-###########################################
 
 output:
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
     inverted: true
-    frequency: 1000 Hz
 
 light:
   - platform: monochromatic
+    name: "Blue LED"
     id: blue_led_light
-    name: Blue LED
     output: blue_led
     internal: true
-
-
-###########################################
-# S K R I P T Y
-###########################################
-
-script:
-
-  # 1) Krátke prebliknutie
-  - id: led_flash
-    then:
-      - output.set_level:
-          id: blue_led
-          level: 100%
-      - delay: 150ms
-      - script.execute: update_led_state
-
-
-  # 2) Riadi hlavnú LED logiku
-  - id: update_led_state
-    mode: restart
-    then:
-      - script.stop: led_breath
-      - script.stop: led_fast_blink
-
-      - if:
-          condition: wifi.connected
-          then:
-            - if:
-                condition: api.connected
-                then:
-                  - output.set_level:
-                      id: blue_led
-                      level: 15%
-                else:
-                  - script.execute: led_breath
-          else:
-            - script.execute: led_fast_blink
-
-
-  # 3) Breathing režim pri WiFi OK a API offline
-  - id: led_breath
-    mode: restart
-    then:
-      - while:
-          condition:
-            and:
-              - wifi.connected
-              - not: api.connected
-          then:
-            - output.set_level:
-                id: blue_led
-                level: 10%
-            - delay: 500ms
-            - output.set_level:
-                id: blue_led
-                level: 30%
-            - delay: 500ms
-
-
-  # 4) Rýchle blikanie pri strate WiFi
-  - id: led_fast_blink
-    mode: restart
-    then:
-      - while:
-          condition:
-            not: wifi.connected
-          then:
-            - output.set_level:
-                id: blue_led
-                level: 70%
-            - delay: 200ms
-            - output.set_level:
-                id: blue_led
-                level: 0%
-            - delay: 200ms
