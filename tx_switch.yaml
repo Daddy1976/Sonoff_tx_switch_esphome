@@ -28,12 +28,13 @@ esphome:
   name: ${device_name}
 
   on_boot:
-    priority: -10
+    priority: -100
     then:
-      - script.execute: light_on_connect
-  project:
-    name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "1.5"
+      - script.execute: update_led_state
+
+project:
+  name: "Mark.Sonoff T1EU2C-TX Series"
+  version: "2.0"
 
 esp8266:
   board: esp01_1m
@@ -44,55 +45,22 @@ wifi:
   networks:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
-#    - ssid: ${wifi_ssid2}
-#      password: ${wifi_pass}
-#  passive_scan: True
   fast_connect: True
-#  on_connect:
-#    then:
-#      - light.turn_on: blue_led_light
+  on_connect:
+    - script.execute: update_led_state
+  on_disconnect:
+    - script.execute: update_led_state
 
 logger:
-  level: info
-  
+
 api:
   reboot_timeout: 15min
-  on_client_disconnected:
-    - logger.log:
-        format: "API client disconnected!"
-        level: warn
   on_client_connected:
-    - logger.log:
-        format: "API client connected!"
-        level: info
-    - script.execute: light_on_connect
+    - script.execute: update_led_state
+  on_client_disconnected:
+    - script.execute: update_led_state
 
 ota:
-  - password: !secret ota_password
-    platform: esphome
-    on_begin:
-      then:
-        - logger.log:
-            format: "OTA start"
-            level: info
-    on_progress:
-      then:
-        - logger.log:
-            format: "OTA progress %0.1f%%"
-            args: ["x"]
-            level: info
-    on_end:
-      then:
-        - logger.log:
-            format: "OTA end"
-            level: info
-    on_error:
-      then:
-        - logger.log:
-            format: "OTA update error %d"
-            args: ["x"]
-            level: warn
-# the web_server & sensor components can be removed without affecting core functionaility.
 
 web_server:
   port: 80
@@ -103,66 +71,32 @@ web_server:
   version: 3
   include_internal: True
 
-#mqtt:
-#  topic_prefix: /homeassistant/tx/$device_name
-#  discovery: false
-#  broker: ${broker_ip}
-#  port: 1883
-#  username: ${broker_user}
-#  password: ${broker_password}
-#  discovery_prefix: homeassistant
-
 sensor:
-  # Uptime sensor
   - platform: uptime
     name: Uptime
-  # WiFi Signal sensor
+
   - platform: wifi_signal
     id: wifi_signal_db
     name: RSSI
-    entity_category: "diagnostic"
     update_interval: 30s
-    icon: mdi:wifi
-#######################################
-# Device specific Config Begins Below #
-#######################################
 
 text_sensor:
   - platform: version
     name: Date
-    entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
       name: IP
-      entity_category: "diagnostic"
-      icon: mdi:ip-network
     ssid:
       name: SSID
-      entity_category: "diagnostic"
-      icon: mdi:access-point
     bssid:
-      name: "Connected"
-      filters:
-        substitute:
-          - "48:8F:5A:17:5B:DD -> AP strecha 2ghz"
-          - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
-
-      entity_category: "diagnostic"
-      icon: mdi:router-wireless
-
-#    scan_results:
-#      name: $device_name Scan
-#      entity_category: "diagnostic"
+      name: Connected AP
 
 binary_sensor:
   - name: Status
     platform: status
     on_state:
-      then:
-        - script.execute:
-            id: light_on_connect
-    icon: mdi:api
-  # the 7 lines below define the reset button
+      - script.execute: update_led_state
+
   - platform: gpio
     pin:
       number: GPIO0
@@ -172,92 +106,94 @@ binary_sensor:
       inverted: true
     name: "Sonoff TX Touchpad 1"
     on_press:
+      - script.execute: led_flash
       - switch.toggle: relay_1
-    icon: mdi:gesture-tap-button
-#      - mqtt.publish_json:
-#          topic: touchpad1
-#          payload: |-
-#              root["key"] = id(relay_1).state;
-#  - platform: gpio
-#    pin:
-#      number: GPIO9
-#      mode:
-#        input: true
-#        pullup: true
-#      inverted: true
-#    name: "Sonoff TX Touchpad 2"
-#    on_press:
-#      - switch.toggle: relay_2
-#      - mqtt.publish_json:
-#          topic: touchpad2
-#          payload: |-
-#              root["key"] = id(relay_2).state;
-#  - platform: gpio
-#    pin:
-#      number: GPIO10
-#      mode:
-#        input: true
-#        pullup: true
-#      inverted: true
-#    name: "Sonoff TX Touchpad 3"
-#    on_press:
-#      - switch.toggle: relay_3
-#      - mqtt.publish_json:
-#          topic: touchpad3
-#          payload: |-
-#              root["key"] = id(relay_3).state;
 
-  # the 13 lines below toggle the main relay on command
 switch:
   - platform: gpio
     name: ${device_name} switch 1
     pin: GPIO012
     id: relay_1
-    icon: mdi:electric-switch
-#  - platform: gpio
-#    name: ${device_name} switch 2
-#    pin: GPIO5
-#    id: relay_2
-#  - platform: gpio
-#    name: ${device_name} switch 3
-#    pin: GPIO4
-#    id: relay_3
 
 output:
-  # the 3 lines below control the Blue LED
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
     inverted: True
+    frequency: 1000 Hz
 
 light:
-  # the 4 lines below define the Blue LED light on Sonoff Mini, to expose in HomeAssistant remove line "internal: true"
   - platform: monochromatic
-    name: "Blue LED"
-    output: blue_led
     id: blue_led_light
+    name: Blue LED
+    output: blue_led
     internal: True
-    icon: mdi:led-on
-    
+
 script:
-  - id: light_on_connect
+
+  # ⚡ krátke prebliknutie pri stlačení tlačidla
+  - id: led_flash
+    then:
+      - output.set_level:
+          id: blue_led
+          level: 100%
+      - delay: 150ms
+      - script.execute: update_led_state
+
+  # 🟦 hlavná logika LED stavového systému
+  - id: update_led_state
     mode: restart
     then:
       - if:
           condition:
-            - api.connected:
+            wifi.connected:
           then:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1000Hz
+            - if:
+                condition:
+                  api.connected:
+                then:
+                  # WIFI OK + API OK → jemné svetlo
+                  - output.set_level:
+                      id: blue_led
+                      level: 20%
+                else:
+                  # WIFI OK + API OFF → breathing efekt
+                  - script.execute: led_breath
+          else:
+            # WIFI OFF → rýchle blikanie
+            - script.execute: led_fast_blink
+
+  # ✨ breathing efekt pri HomeAssistant OFF
+  - id: led_breath
+    mode: restart
+    then:
+      - while:
+          condition:
+            wifi.connected
+          then:
             - output.set_level:
                 id: blue_led
-                level: 20%
-          else:
-            - output.esp8266_pwm.set_frequency:
+                level: 10%
+            - delay: 500ms
+            - output.set_level:
                 id: blue_led
-                frequency: 1Hz
+                level: 30%
+            - delay: 500ms
+
+  # 🚨 rýchle blikanie pri strate WiFi
+  - id: led_fast_blink
+    mode: restart
+    then:
+      - while:
+          condition:
+            not:
+              wifi.connected:
+          then:
             - output.set_level:
                 id: blue_led
                 level: 100%
-    
+            - delay: 200ms
+            - output.set_level:
+                id: blue_led
+                level: 0%
+            - delay: 200ms
