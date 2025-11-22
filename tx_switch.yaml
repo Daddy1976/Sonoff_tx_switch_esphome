@@ -95,6 +95,22 @@ web_server:
 
 
 ###########################################
+# Č A S – reset denného runtime
+###########################################
+
+time:
+  - platform: sntp
+    id: sntp_time
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 0
+        then:
+          - lambda: |-
+              id(relay_1_runtime_today).reset();
+
+
+###########################################
 # S E N Z O R Y
 ###########################################
 
@@ -130,22 +146,6 @@ sensor:
     time_unit: min
     id: relay_1_runtime_today
     restore: true  # OPRAVA — aby bola entita dostupná v HA hneď
-
-
-###########################################
-# Č A S – reset denného runtime
-###########################################
-
-time:
-  - platform: sntp
-    id: sntp_time
-    on_time:
-      - seconds: 0
-        minutes: 0
-        hours: 0
-        then:
-          - lambda: |-
-              id(relay_1_runtime_today).reset();
 
 
 ###########################################
