@@ -277,17 +277,13 @@ script:
             - if:
                 condition: api.connected
                 then:
-                  - break
+                  - script.stop: led_breath
+                  - script.execute: update_led_state
 
             - output.set_level:
                 id: blue_led
                 level: 30%
             - delay: 500ms
-
-            - if:
-                condition: api.connected
-                then:
-                  - break
 
   # Rýchle blikanie pri strate WiFi
   - id: led_fast_blink
