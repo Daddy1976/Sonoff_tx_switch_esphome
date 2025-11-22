@@ -102,11 +102,13 @@ web_server:
 sensor:
   - platform: uptime
     name: Uptime
-
+  
   - platform: wifi_signal
     id: wifi_signal_db
     name: RSSI
+    entity_category: "diagnostic"
     update_interval: 30s
+    icon: mdi:wifi
 
   # -------------------------------
   # PREVÁDZKOVÝ ČAS RELÉ 1 (hodiny / minúty)
@@ -157,14 +159,25 @@ time:
 text_sensor:
   - platform: version
     name: Date
-
+    entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
       name: IP
+      entity_category: "diagnostic"
+      icon: mdi:ip-network
     ssid:
       name: SSID
+      entity_category: "diagnostic"
+      icon: mdi:access-point
     bssid:
-      name: Connected AP
+      name: "Connected"
+      filters:
+        substitute:
+          - "48:8F:5A:17:5B:DD -> AP strecha 2ghz"
+          - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
+
+      entity_category: "diagnostic"
+      icon: mdi:router-wireless
 
 
 ###########################
