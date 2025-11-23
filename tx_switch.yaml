@@ -23,8 +23,8 @@ api:
     - script.execute: light_on_connect
 
 ota:
-    password: !secret ota_password
     platform: esphome
+    password: !secret ota_password
     on_begin:
       then:
         - logger.log:
