@@ -184,7 +184,7 @@ switch:
       - lambda: |-
             uint32_t now = millis() / 1000;
             id(relay1_total_runtime) += (now - id(relay1_start_time));
-            id(relay1_runtime_sensor).publish_state(id(relay_total_runtime));
+            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
 
 
 ###########################################
