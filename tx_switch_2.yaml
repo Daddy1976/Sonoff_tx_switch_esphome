@@ -26,70 +26,66 @@
 
 esphome:
   name: ${device_name}
-
-  on_boot:
-    priority: -10
-    then:
-      - light.turn_on: blue_led_light
   project:
     name: "Mark.Sonoff T1EU2C-TX Series"
-    version: "1.5"
+    version: "2.2"
+
+  on_boot:
+    priority: -100
+    then:
+      - script.execute: update_led_state
 
 esp8266:
   board: esp01_1m
+  framework:
+    version: recommended
+    
+globals:
+  - id: relay1_total_runtime
+    type: uint32_t
+    restore_value: yes
+    initial_value: "0"
+    
+  - id: relay2_total_runtime
+    type: uint32_t
+    restore_value: yes
+    initial_value: "0"
+
+  - id: relay1_start_time
+    type: uint32_t
+    restore_value: no
+
+  - id: relay2_start_time
+    type: uint32_t
+    restore_value: no
 
 wifi:
   networks:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
-#    - ssid: ${wifi_ssid2}
-#      password: ${wifi_pass}
-#  passive_scan: True
-  fast_connect: True
+  fast_connect: true
+
   on_connect:
-    then:
-      - light.turn_on: blue_led_light
+    - script.execute: update_led_state
+  on_disconnect:
+    - script.execute: update_led_state
 
 logger:
-  level: info
-  
+  level: INFO
+
+safe_mode:
+  disabled: true
+
 api:
   reboot_timeout: 15min
-  on_client_disconnected:
-    - logger.log:
-        format: "API client disconnected!"
-        level: warn
   on_client_connected:
-    - logger.log:
-        format: "API client connected!"
-        level: info
-    - script.execute: light_on_connect
+    - script.execute: update_led_state
+  on_client_disconnected:
+    - script.execute: update_led_state
 
 ota:
-  - password: !secret ota_password
-    platform: esphome
-    on_begin:
-      then:
-        - logger.log:
-            format: "OTA start"
-            level: info
-    on_progress:
-      then:
-        - logger.log:
-            format: "OTA progress %0.1f%%"
-            args: ["x"]
-            level: info
-    on_end:
-      then:
-        - logger.log:
-            format: "OTA end"
-            level: info
-    on_error:
-      then:
-        - logger.log:
-            format: "OTA update error %d"
-            args: ["x"]
-            level: warn
+ - platform: esphome
+   password: !secret ota_password
 # the web_server & sensor components can be removed without affecting core functionaility.
 
 web_server:
@@ -99,35 +95,45 @@ web_server:
     password: !secret web_server_password
   js_url: "https://oi.esphome.io/v3/www.js"
   version: 3
-#  include_internal: True
 
-#mqtt:
-#  topic_prefix: /homeassistant/tx/$device_name
-#  discovery: false
-#  broker: ${broker_ip}
-#  port: 1883
-#  username: ${broker_user}
-#  password: ${broker_password}
-#  discovery_prefix: homeassistant
+###########################################
+# S E N Z O R Y
+###########################################
 
 sensor:
-  # Uptime sensor
   - platform: uptime
     name: Uptime
-  # WiFi Signal sensor
+
   - platform: wifi_signal
     id: wifi_signal_db
     name: RSSI
-    entity_category: "diagnostic"
     update_interval: 30s
+    entity_category: "diagnostic"
     icon: mdi:wifi
-#######################################
-# Device specific Config Begins Below #
-#######################################
+
+  # PREVÁDZKOVÝ ČAS RELÉ 1
+  - platform: template
+    name: "Celkový Čas 1"
+    id: relay_1_state_numeric
+    unit_of_measurement: "s"
+    accuracy_decimals: 0
+    icon: mdi:timer-outline
+
+  # PREVÁDZKOVÝ ČAS RELÉ 2
+  - platform: template
+    name: "Celkový Čas 2"
+    id: relay_2_state_numeric
+    unit_of_measurement: "s"
+    accuracy_decimals: 0
+    icon: mdi:timer-outline
+    
+###########################################
+# T E X T  S E N Z O R Y
+###########################################
 
 text_sensor:
   - platform: version
-    name: Date
+    name: ESP Version
     entity_category: "diagnostic"
   - platform: wifi_info
     ip_address:
@@ -148,19 +154,16 @@ text_sensor:
       entity_category: "diagnostic"
       icon: mdi:router-wireless
 
-#    scan_results:
-#      name: $device_name Scan
-#      entity_category: "diagnostic"
+###########################################
+# B I N Á R N E  S E N Z O R Y
+###########################################
 
 binary_sensor:
-  - name: Status
-    platform: status
+  - platform: status
+    name: Status
     on_state:
-      then:
-        - script.execute:
-            id: light_on_connect
-    icon: mdi:api
-  # the 7 lines below define the reset button
+      - script.execute: update_led_state
+
   - platform: gpio
     pin:
       number: GPIO0
@@ -170,12 +173,10 @@ binary_sensor:
       inverted: true
     name: "Sonoff TX Touchpad 1"
     on_press:
+      - script.execute: led_flash
       - switch.toggle: relay_1
     icon: mdi:gesture-tap-button
-#      - mqtt.publish_json:
-#          topic: touchpad1
-#          payload: |-
-#              root["key"] = id(relay_1).state;
+      
   - platform: gpio
     pin:
       number: GPIO9
@@ -185,80 +186,130 @@ binary_sensor:
       inverted: true
     name: "Sonoff TX Touchpad 2"
     on_press:
+      - script.execute: led_flash
       - switch.toggle: relay_2
     icon: mdi:gesture-tap-button
-#      - mqtt.publish_json:
-#          topic: touchpad2
-#          payload: |-
-#              root["key"] = id(relay_2).state;
-#  - platform: gpio
-#    pin:
-#      number: GPIO10
-#      mode:
-#        input: true
-#        pullup: true
-#      inverted: true
-#    name: "Sonoff TX Touchpad 3"
-#    on_press:
-#      - switch.toggle: relay_3
-#      - mqtt.publish_json:
-#          topic: touchpad3
-#          payload: |-
-#              root["key"] = id(relay_3).state;
 
-  # the 13 lines below toggle the main relay on command
+###########################################
+# R E L É
+###########################################
+
 switch:
   - platform: gpio
     name: ${device_name} switch 1
     pin: GPIO012
     id: relay_1
     icon: mdi:electric-switch
+    on_turn_on:
+      - lambda: |-
+            id(relay1_start_time) = millis() / 1000;
+    on_turn_off:
+      - lambda: |-
+            uint32_t now = millis() / 1000;
+            id(relay1_total_runtime) += (now - id(relay1_start_time));
+            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
   - platform: gpio
     name: ${device_name} switch 2
     pin: GPIO5
     id: relay_2
     icon: mdi:electric-switch
-#  - platform: gpio
-#    name: ${device_name} switch 3
-#    pin: GPIO4
-#    id: relay_3
+    on_turn_on:
+      - lambda: |-
+            id(relay2_start_time) = millis() / 1000;
+    on_turn_off:
+      - lambda: |-
+            uint32_t now = millis() / 1000;
+            id(relay2_total_runtime) += (now - id(relay2_start_time));
+            id(relay_2_state_numeric).publish_state(id(relay2_total_runtime));
+
+###########################################
+# L E D  &  W M
+###########################################
 
 output:
-  # the 3 lines below control the Blue LED
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
-    inverted: True
+    inverted: true
+    frequency: 1000 Hz
 
 light:
-  # the 4 lines below define the Blue LED light on Sonoff Mini, to expose in HomeAssistant remove line "internal: true"
   - platform: monochromatic
-    name: "Blue LED"
-    output: blue_led
     id: blue_led_light
-    internal: True
-    icon: mdi:led-on
+    name: Blue LED
+    output: blue_led
+    internal: true
     
     
+###########################################
+# S K R I P T Y
+###########################################
+
 script:
-  - id: light_on_connect
+
+  # 1) Krátke prebliknutie
+  - id: led_flash
+    then:
+      - output.set_level:
+          id: blue_led
+          level: 100%
+      - delay: 150ms
+      - script.execute: update_led_state
+
+
+  # 2) Riadi hlavnú LED logiku
+  - id: update_led_state
     mode: restart
     then:
+      - script.stop: led_breath
+      - script.stop: led_fast_blink
+
       - if:
-          condition:
-            - api.connected:
+          condition: wifi.connected
           then:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1000Hz
-            - output.set_level:
-                id: blue_led
-                level: 20%
+            - if:
+                condition: api.connected
+                then:
+                  - output.set_level:
+                      id: blue_led
+                      level: 15%
+                else:
+                  - script.execute: led_breath
           else:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1Hz
+            - script.execute: led_fast_blink
+
+
+  # 3) Breathing režim pri WiFi OK a API offline
+  - id: led_breath
+    mode: restart
+    then:
+      - while:
+          condition: wifi.connected
+          then:
             - output.set_level:
                 id: blue_led
-                level: 100%
+                level: 10%
+            - delay: 500ms
+            - output.set_level:
+                id: blue_led
+                level: 30%
+            - delay: 500ms
+
+
+  # 4) Rýchle blikanie pri strate WiFi
+  - id: led_fast_blink
+    mode: restart
+    then:
+      - while:
+          condition:
+            not: wifi.connected
+          then:
+            - output.set_level:
+                id: blue_led
+                level: 70%
+            - delay: 200ms
+            - output.set_level:
+                id: blue_led
+                level: 0%
+            - delay: 200ms
     
