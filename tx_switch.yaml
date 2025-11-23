@@ -86,20 +86,6 @@ sensor:
     icon: mdi:timer-outline
 
 
-###########################################
-# Č A S – reset denného runtime
-###########################################
-
-#time:
-#  - platform: sntp
-#    id: sntp_time
-#    on_time:
-#      - seconds: 0
-#        minutes: 0
-#        hours: 0
-#        then:
-#          - lambda: |-
-#              id(relay_1_runtime_today).reset();
 
 
 ###########################################
