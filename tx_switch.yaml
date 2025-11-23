@@ -229,7 +229,7 @@ script:
             - delay: 500ms
             - output.set_level:
                 id: blue_led
-                level: 700%
+                level: 70%
             - delay: 500ms
 
 
