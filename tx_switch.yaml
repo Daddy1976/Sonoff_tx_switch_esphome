@@ -11,14 +11,53 @@ wifi:
   fast_connect: true
 
 api:
+  reboot_timeout: 15min
+  on_client_disconnected:
+    - logger.log:
+        format: "API client disconnected!"
+        level: warn
+  on_client_connected:
+    - logger.log:
+        format: "API client connected!"
+        level: info
+    - script.execute: light_on_connect
 
 ota:
-  password: !secret ota_password
+  - password: !secret ota_password
+    platform: esphome
+    on_begin:
+      then:
+        - logger.log:
+            format: "OTA start"
+            level: info
+    on_progress:
+      then:
+        - logger.log:
+            format: "OTA progress %0.1f%%"
+            args: ["x"]
+            level: info
+    on_end:
+      then:
+        - logger.log:
+            format: "OTA end"
+            level: info
+    on_error:
+      then:
+        - logger.log:
+            format: "OTA update error %d"
+            args: ["x"]
+            level: warn
 
 logger:
+    level: info
 
 web_server:
   port: 80
+  auth:
+    username: !secret web_server_username
+    password: !secret web_server_password
+  js_url: "https://oi.esphome.io/v3/www.js"
+  version: 3
 
 time:
   - platform: sntp
@@ -59,41 +98,158 @@ sensor:
     time_unit: min
     id: relay_1_runtime_today
     restore: true
+    
+#######################################
+# Device specific Config Begins Below #
+#######################################
 
 text_sensor:
   - platform: version
-    name: "ESPHome Version"
+    name: Date
+    entity_category: "diagnostic"
+  - platform: wifi_info
+    ip_address:
+      name: IP
+      entity_category: "diagnostic"
+      icon: mdi:ip-network
+    ssid:
+      name: SSID
+      entity_category: "diagnostic"
+      icon: mdi:access-point
+    bssid:
+      name: "Connected"
+      filters:
+        substitute:
+          - "48:8F:5A:17:5B:DD -> AP strecha 2ghz"
+          - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
+
+      entity_category: "diagnostic"
+      icon: mdi:router-wireless
+
+
+
+###########################################
+# B I N Á R N E  S E N Z O R Y
+###########################################
 
 binary_sensor:
   - platform: status
-    name: "Status"
+    name: Status
+    on_state:
+      - script.execute: update_led_state
 
   - platform: gpio
-    name: "Touchpad 1"
     pin:
       number: GPIO0
-      inverted: true
       mode:
         input: true
         pullup: true
+      inverted: true
+    name: "Sonoff TX Touchpad 1"
     on_press:
+      - script.execute: led_flash
       - switch.toggle: relay_1
+
+###########################################
+# R E L É
+###########################################
 
 switch:
   - platform: gpio
-    name: "Terasa Relay 1"
-    pin: GPIO12
+    name: ${device_name} switch 1
+    pin: GPIO012
     id: relay_1
+    icon: mdi:electric-switch
+    
+###########################################
+# L E D  &  W M
+###########################################
 
 output:
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
     inverted: true
+    frequency: 1000 Hz
 
 light:
   - platform: monochromatic
-    name: "Blue LED"
     id: blue_led_light
+    name: Blue LED
     output: blue_led
     internal: true
+
+###########################################
+# S K R I P T Y
+###########################################
+
+script:
+
+  # 1) Krátke prebliknutie
+  - id: led_flash
+    then:
+      - output.set_level:
+          id: blue_led
+          level: 100%
+      - delay: 150ms
+      - script.execute: update_led_state
+
+
+  # 2) Riadi hlavnú LED logiku
+  - id: update_led_state
+    mode: restart
+    then:
+      - script.stop: led_breath
+      - script.stop: led_fast_blink
+
+      - if:
+          condition: wifi.connected
+          then:
+            - if:
+                condition: api.connected
+                then:
+                  - output.set_level:
+                      id: blue_led
+                      level: 15%
+                else:
+                  - script.execute: led_breath
+          else:
+            - script.execute: led_fast_blink
+
+
+  # 3) Breathing režim pri WiFi OK a API offline
+  - id: led_breath
+    mode: restart
+    then:
+      - while:
+          condition:
+            and:
+              - wifi.connected
+              - not: api.connected
+          then:
+            - output.set_level:
+                id: blue_led
+                level: 10%
+            - delay: 500ms
+            - output.set_level:
+                id: blue_led
+                level: 30%
+            - delay: 500ms
+
+
+  # 4) Rýchle blikanie pri strate WiFi
+  - id: led_fast_blink
+    mode: restart
+    then:
+      - while:
+          condition:
+            not: wifi.connected
+          then:
+            - output.set_level:
+                id: blue_led
+                level: 70%
+            - delay: 200ms
+            - output.set_level:
+                id: blue_led
+                level: 0%
+            - delay: 200ms
