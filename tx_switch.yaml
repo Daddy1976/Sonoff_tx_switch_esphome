@@ -79,7 +79,7 @@ sensor:
 
   # PREVÁDZKOVÝ ČAS RELÉ 1
   - platform: template
-    name: ${devide_name} Celkový Cas
+    name: "Celkový Čas"
     id: relay_1_state_numeric
     unit_of_measurement: "s"
     accuracy_decimals: 0
