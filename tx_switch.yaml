@@ -85,20 +85,6 @@ sensor:
     accuracy_decimals: 0
     icon: mdi:timer-outline
 
-  - platform: integration
-    name: "Relay 1 Runtime Total"
-    sensor: relay_1_state_numeric
-    time_unit: h
-    id: relay_1_runtime_total
-    restore: true
-
-  - platform: integration
-    name: "Relay 1 Runtime Today"
-    sensor: relay_1_state_numeric
-    time_unit: min
-    id: relay_1_runtime_today
-    restore: true  # OPRAVA — aby bola entita dostupná v HA hneď
-
 
 ###########################################
 # Č A S – reset denného runtime
