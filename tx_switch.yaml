@@ -23,7 +23,7 @@ api:
     - script.execute: light_on_connect
 
 ota:
-  - password: !secret ota_password
+    password: !secret ota_password
     platform: esphome
     on_begin:
       then:
