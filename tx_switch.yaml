@@ -28,6 +28,9 @@ wifi:
 logger:
   level: INFO
 
+safe_mode:
+  disabled: true
+
 api:
   reboot_timeout: 15min
   on_client_connected:
@@ -140,7 +143,12 @@ text_sensor:
       entity_category: "diagnostic"
       icon: mdi:access-point
     bssid:
-      name: Connected AP
+      name: "Connected"
+      filters:
+        substitute:
+          - "48:8F:5A:17:5B:DD -> AP strecha 2ghz"
+          - "48:8F:5A:17:5C:01 -> AP obyvacka 2ghz"
+
       entity_category: "diagnostic"
       icon: mdi:router-wireless
 
@@ -242,10 +250,7 @@ script:
     mode: restart
     then:
       - while:
-          condition:
-            and:
-              - wifi.connected
-              - not: api.connected
+          condition: wifi.connected
           then:
             - output.set_level:
                 id: blue_led
