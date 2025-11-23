@@ -27,7 +27,7 @@
 esphome:
   name: ${device_name}
   project:
-    name: "Mark.Sonoff T1EU2C-TX Series"
+    name: "Mark.Sonoff_T1EU2C-TX_Series"
     version: "2.3"
 
   on_boot:
