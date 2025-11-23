@@ -37,8 +37,6 @@ api:
 
 ota:
   platform: esphome
-  password: !secret ota_password
-
   on_begin:
     then:
       - logger.log: "OTA start"
