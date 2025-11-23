@@ -240,25 +240,78 @@ light:
     icon: mdi:led-on
     
     
+###########################################
+# S K R I P T Y
+###########################################
+
 script:
-  - id: light_on_connect
+
+  # 1) Krátke prebliknutie
+  - id: led_flash
+    then:
+      - output.set_level:
+          id: blue_led
+          level: 100%
+      - delay: 150ms
+      - script.execute: update_led_state
+
+
+  # 2) Riadi hlavnú LED logiku
+  - id: update_led_state
     mode: restart
     then:
+      - script.stop: led_breath
+      - script.stop: led_fast_blink
+
       - if:
-          condition:
-            - api.connected:
+          condition: wifi.connected
           then:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1000Hz
-            - output.set_level:
-                id: blue_led
-                level: 20%
+            - if:
+                condition: api.connected
+                then:
+                  - output.set_level:
+                      id: blue_led
+                      level: 15%
+                else:
+                  - script.execute: led_breath
           else:
-            - output.esp8266_pwm.set_frequency:
-                id: blue_led
-                frequency: 1Hz
+            - script.execute: led_fast_blink
+
+
+  # 3) Breathing režim pri WiFi OK a API offline
+  - id: led_breath
+    mode: restart
+    then:
+      - while:
+          condition:
+            and:
+              - wifi.connected
+              - not: api.connected
+          then:
             - output.set_level:
                 id: blue_led
-                level: 100%
+                level: 10%
+            - delay: 500ms
+            - output.set_level:
+                id: blue_led
+                level: 30%
+            - delay: 500ms
+
+
+  # 4) Rýchle blikanie pri strate WiFi
+  - id: led_fast_blink
+    mode: restart
+    then:
+      - while:
+          condition:
+            not: wifi.connected
+          then:
+            - output.set_level:
+                id: blue_led
+                level: 70%
+            - delay: 200ms
+            - output.set_level:
+                id: blue_led
+                level: 0%
+            - delay: 200ms
     
