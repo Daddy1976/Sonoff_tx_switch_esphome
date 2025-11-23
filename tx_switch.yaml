@@ -13,6 +13,16 @@ esp8266:
   board: esp01_1m
   framework:
     version: recommended
+    
+globals:
+  - id: relay1_total_runtime
+    type: uint32_t
+    restore_value: yes
+    initial_value: "0"
+
+  - id: relay1_start_time
+    type: uint32_t
+    restore_value: no
 
 wifi:
   networks:
@@ -41,25 +51,6 @@ api:
 ota:
  - platform: esphome
    password: !secret ota_password
-   on_begin:
-    then:
-      - logger.log: "OTA start"
-
-   on_progress:
-    then:
-      - logger.log:
-          format: "OTA progress %0.1f%%"
-          args: ["x"]
-
-   on_end:
-    then:
-      - logger.log: "OTA end"
-
-   on_error:
-    then:
-      - logger.log:
-          format: "OTA update error %d"
-          args: ["x"]
 
 web_server:
   port: 80
@@ -88,11 +79,11 @@ sensor:
 
   # PREVÁDZKOVÝ ČAS RELÉ 1
   - platform: template
+    name: ${devide_name} Celkový Cas
     id: relay_1_state_numeric
-    internal: true
-    update_interval: 1s
-    lambda: |-
-      return id(relay_1).state ? 1.0 : 0.0;
+    unit_of_measurement: "s"
+    accuracy_decimals: 0
+    icon: mdi:timer-outline
 
   - platform: integration
     name: "Relay 1 Runtime Total"
@@ -186,6 +177,14 @@ switch:
     pin: GPIO012
     id: relay_1
     icon: mdi:electric-switch
+    on_turn_on:
+      - lambda: |-
+            id(relay1_start_time) = millis() / 1000;
+    on_turn_off:
+      - lambda: |-
+            uint32_t now = millis() / 1000;
+            id(relay1_total_runtime) += (now - id(relay1_start_time));
+            id(relay1_runtime_sensor).publish_state(id(relay_total_runtime));
 
 
 ###########################################
