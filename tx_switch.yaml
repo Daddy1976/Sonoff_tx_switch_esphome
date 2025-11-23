@@ -36,22 +36,22 @@ api:
     - script.execute: update_led_state
 
 ota:
-  platform: esphome
-  on_begin:
+ - platform: esphome
+   on_begin:
     then:
       - logger.log: "OTA start"
 
-  on_progress:
+   on_progress:
     then:
       - logger.log:
           format: "OTA progress %0.1f%%"
           args: ["x"]
 
-  on_end:
+   on_end:
     then:
       - logger.log: "OTA end"
 
-  on_error:
+   on_error:
     then:
       - logger.log:
           format: "OTA update error %d"
