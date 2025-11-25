@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.4"
+    version: "2.5"
 
   on_boot:
     priority: -100
@@ -55,7 +55,7 @@ ota:
    repository: Mark/Sonoff_T1EU2C-TX_Series
     # verzia, ktorú má zariadenie očakávať pri update.
     # Môže to byť tag, release alebo branch.
-   version: "2.4"
+   version: "2.5"
 
 web_server:
   port: 80
@@ -87,6 +87,7 @@ sensor:
     name: "Celkový Čas"
     id: relay_1_state_numeric
     unit_of_measurement: "s"
+    device_class: duration
     accuracy_decimals: 0
     icon: mdi:timer-outline
 
