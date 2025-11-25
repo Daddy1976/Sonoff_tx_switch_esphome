@@ -51,11 +51,11 @@ api:
 ota:
  - platform: esphome
    password: !secret ota_password
- - platform: github
-   repository: Mark/Sonoff_T1EU2C-TX_Series
+# - platform: github
+#   repository: Mark/Sonoff_T1EU2C-TX_Series
     # verzia, ktorú má zariadenie očakávať pri update.
     # Môže to byť tag, release alebo branch.
-   version: "2.5"
+#   version: "2.5"
 
 web_server:
   port: 80
