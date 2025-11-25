@@ -28,7 +28,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.4"
+    version: "2.5"
 
   on_boot:
     priority: -100
@@ -116,6 +116,7 @@ sensor:
     name: "Celkový Čas 1"
     id: relay_1_state_numeric
     unit_of_measurement: "s"
+    device_class: duration
     accuracy_decimals: 0
     icon: mdi:timer-outline
 
@@ -124,6 +125,7 @@ sensor:
     name: "Celkový Čas 2"
     id: relay_2_state_numeric
     unit_of_measurement: "s"
+    device_class: duration
     accuracy_decimals: 0
     icon: mdi:timer-outline
     
