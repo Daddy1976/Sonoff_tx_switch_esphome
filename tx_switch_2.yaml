@@ -28,7 +28,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.5"
+    version: "2.7"
 
   on_boot:
     priority: -100
@@ -128,6 +128,27 @@ sensor:
     device_class: duration
     accuracy_decimals: 0
     icon: mdi:timer-outline
+    
+
+###############################
+# Reset relay on time counter #
+###############################
+    
+
+time:
+  - platform: homeassistant
+    id: ha_time
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 0
+        days_of_month: 1
+        then:
+          - lambda: |-
+              id(relay1_total_runtime) = 0;
+              id(relay_1_state_numeric).publish_state(0);
+              id(relay2_total_runtime) = 0;
+              id(relay_2_state_numeric).publish_state(0);
     
 ###########################################
 # T E X T  S E N Z O R Y
@@ -274,7 +295,7 @@ script:
                 then:
                   - output.set_level:
                       id: blue_led
-                      level: 15%
+                      level: 10%
                 else:
                   - script.execute: led_breath
           else:
@@ -294,7 +315,7 @@ script:
             - delay: 500ms
             - output.set_level:
                 id: blue_led
-                level: 70%
+                level: 90%
             - delay: 500ms
 
 
@@ -309,9 +330,9 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 100%
-            - delay: 200ms
+            - delay: 100ms
             - output.set_level:
                 id: blue_led
                 level: 0%
-            - delay: 200ms
+            - delay: 100ms
     
