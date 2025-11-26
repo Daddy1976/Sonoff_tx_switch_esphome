@@ -28,6 +28,11 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
+    version: "2.7"       # ← ZOBRAZÍ sa v Home Assistante
+
+ota:
+  - platform: github
+    repository: Daddy1976/Sonoff_T1EU2C-TX_Series   # (alebo presný názov tvojho repo)
     version: "2.7"
 
   on_boot:
