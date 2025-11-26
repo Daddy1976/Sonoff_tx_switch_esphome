@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.6"
+    version: "2.7"
 
   on_boot:
     priority: -100
@@ -90,6 +90,25 @@ sensor:
     device_class: duration
     accuracy_decimals: 0
     icon: mdi:timer-outline
+    
+
+###############################
+# Reset relay on time counter #
+###############################
+    
+
+time:
+  - platform: homeassistant
+    id: ha_time
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 0
+        days_of_month: 1
+        then:
+          - lambda: |-
+              id(relay1_total_runtime) = 0;
+              id(relay_1_state_numeric).publish_state(0);
 
 
 
@@ -215,7 +234,7 @@ script:
                 then:
                   - output.set_level:
                       id: blue_led
-                      level: 12%
+                      level: 10%
                 else:
                   - script.execute: led_breath
           else:
@@ -232,11 +251,11 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 100%
-            - delay: 50ms
+            - delay: 150ms
             - output.set_level:
                 id: blue_led
-                level: 50%
-            - delay: 250ms
+                level: 20%
+            - delay: 500ms
 
 
   # 4) Rýchle blikanie pri strate WiFi
@@ -250,8 +269,8 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 100%
-            - delay: 50ms
+            - delay: 150ms
             - output.set_level:
                 id: blue_led
                 level: 0%
-            - delay: 250ms
+            - delay: 500ms
