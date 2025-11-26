@@ -215,7 +215,7 @@ script:
                 then:
                   - output.set_level:
                       id: blue_led
-                      level: 15%
+                      level: 12%
                 else:
                   - script.execute: led_breath
           else:
@@ -231,12 +231,12 @@ script:
           then:
             - output.set_level:
                 id: blue_led
-                level: 30%
-            - delay: 500ms
+                level: 100%
+            - delay: 50ms
             - output.set_level:
                 id: blue_led
-                level: 70%
-            - delay: 500ms
+                level: 50%
+            - delay: 250ms
 
 
   # 4) Rýchle blikanie pri strate WiFi
@@ -250,8 +250,8 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 100%
-            - delay: 200ms
+            - delay: 50ms
             - output.set_level:
                 id: blue_led
                 level: 0%
-            - delay: 200ms
+            - delay: 250ms
