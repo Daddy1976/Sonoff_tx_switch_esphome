@@ -250,11 +250,11 @@ script:
           then:
             - output.set_level:
                 id: blue_led
-                level: 100%
-            - delay: 150ms
+                level: 90%
+            - delay: 500ms
             - output.set_level:
                 id: blue_led
-                level: 20%
+                level: 30%
             - delay: 500ms
 
 
@@ -269,8 +269,8 @@ script:
             - output.set_level:
                 id: blue_led
                 level: 100%
-            - delay: 150ms
+            - delay: 100ms
             - output.set_level:
                 id: blue_led
                 level: 0%
-            - delay: 500ms
+            - delay: 100ms
