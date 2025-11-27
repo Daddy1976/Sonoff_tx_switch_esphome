@@ -13,6 +13,8 @@ ota:
   platform: http_request
   url: https://raw.githubusercontent.com/Daddy1976/Sonoff_tx_switch_esphome/main/tx_switch.yaml
   password: !secret ota_password
+  
+http_request:
 
 esp8266:
   board: esp01_1m
