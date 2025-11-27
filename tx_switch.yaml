@@ -8,7 +8,7 @@ ota:
   - platform: esphome
     password: !secret ota_password
   - platform: http_request
-    url: https://raw.githubusercontent.com/Daddy1976/Sonoff_tx_switch_esphome/main/tx-switch.yaml
+    url: https://raw.githubusercontent.com/Daddy1976/Sonoff_tx_switch_esphome/main/tx_switch.yaml
 
   on_boot:
     priority: -100
