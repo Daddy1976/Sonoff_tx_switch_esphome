@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.7"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "2.8"       # ← ZOBRAZÍ sa v Home Assistante
 
 ota:
   - platform: esphome
@@ -36,6 +36,7 @@ wifi:
     - ssid: ${wifi_ssid}
       password: ${wifi_pass}
   fast_connect: true
+  min_auth_mode: WPA2
 
   on_connect:
     - script.execute: update_led_state
