@@ -31,6 +31,8 @@ esphome:
     version: "2.7"       # ← ZOBRAZÍ sa v Home Assistante
 
 ota:
+  - platform: esphome
+    password: !secret ota_password
   - platform: github
     repository: Daddy1976/Sonoff_T1EU2C-TX_Series   # (alebo presný názov tvojho repo)
     version: "2.7"
@@ -87,11 +89,6 @@ api:
     - script.execute: update_led_state
   on_client_disconnected:
     - script.execute: update_led_state
-
-ota:
- - platform: esphome
-   password: !secret ota_password
-# the web_server & sensor components can be removed without affecting core functionaility.
 
 web_server:
   port: 80
