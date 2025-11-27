@@ -24,6 +24,10 @@ globals:
   - id: relay1_start_time
     type: uint32_t
     restore_value: no
+    
+ota:
+  - platform: esphome
+    password: !secret ota_password
 
 wifi:
   networks:
