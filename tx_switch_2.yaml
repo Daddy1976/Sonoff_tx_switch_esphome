@@ -28,7 +28,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.7"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "2.8"       # ← ZOBRAZÍ sa v Home Assistante
 
 ota:
   - platform: esphome
