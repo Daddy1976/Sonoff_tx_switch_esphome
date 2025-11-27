@@ -36,6 +36,8 @@ wifi:
     - script.execute: update_led_state
   on_disconnect:
     - script.execute: update_led_state
+    
+ota:
 
 logger:
   level: INFO
