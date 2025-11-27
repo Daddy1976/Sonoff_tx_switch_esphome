@@ -34,7 +34,7 @@ ota:
   - platform: esphome
     password: !secret ota_password
   - platform: github
-    repository: Daddy1976/Sonoff_T1EU2C-TX_Series   # (alebo presný názov tvojho repo)
+    repository: Daddy1976/Sonoff_tx_switch_esphome   # (alebo presný názov tvojho repo)
     version: "2.7"
 
   on_boot:
