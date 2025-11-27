@@ -5,9 +5,9 @@ esphome:
     version: "2.8"       # ← ZOBRAZÍ sa v Home Assistante
 
 ota:
-    platform: http_request
-    url: https://raw.githubusercontent.com/Daddy1976/Sonoff_tx_switch_esphome/main/tx_switch.yaml
-    password: !secret ota_password
+  platform: http_request
+  url: https://raw.githubusercontent.com/Daddy1976/Sonoff_tx_switch_esphome/main/tx_switch.yaml
+  password: !secret ota_password
 
   on_boot:
     priority: -100
