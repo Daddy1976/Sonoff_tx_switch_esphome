@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.8"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "2.9"       # ← ZOBRAZÍ sa v Home Assistante
 
   on_boot:
     priority: -100
@@ -101,7 +101,6 @@ time:
       - seconds: 0
         minutes: 0
         hours: 0
-        days_of_month: 1
         then:
           - lambda: |-
               id(relay1_total_runtime) = 0;
