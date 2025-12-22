@@ -204,7 +204,7 @@ light:
     internal: true
     
   - platform: binary
-    name: ${device_name} light 1
+    name: light 1
     id: light_1
     output: relay_1
     icon: mdi:lightbulb
