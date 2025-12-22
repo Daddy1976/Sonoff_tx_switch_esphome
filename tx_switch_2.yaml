@@ -28,7 +28,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.9"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "3.1"       # ← ZOBRAZÍ sa v Home Assistante
 
   on_boot:
     priority: -100
@@ -215,33 +215,33 @@ binary_sensor:
 # R E L É
 ###########################################
 
-switch:
-  - platform: gpio
-    name: ${device_name} switch 1
-    pin: GPIO012
-    id: relay_1
-    icon: mdi:electric-switch
-    on_turn_on:
-      - lambda: |-
-            id(relay1_start_time) = millis() / 1000;
-    on_turn_off:
-      - lambda: |-
-            uint32_t now = millis() / 1000;
-            id(relay1_total_runtime) += (now - id(relay1_start_time));
-            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
-  - platform: gpio
-    name: ${device_name} switch 2
-    pin: GPIO5
-    id: relay_2
-    icon: mdi:electric-switch
-    on_turn_on:
-      - lambda: |-
-            id(relay2_start_time) = millis() / 1000;
-    on_turn_off:
-      - lambda: |-
-            uint32_t now = millis() / 1000;
-            id(relay2_total_runtime) += (now - id(relay2_start_time));
-            id(relay_2_state_numeric).publish_state(id(relay2_total_runtime));
+#switch:
+#  - platform: gpio
+#    name: ${device_name} switch 1
+#    pin: GPIO012
+#    id: relay_1
+#    icon: mdi:electric-switch
+#    on_turn_on:
+#      - lambda: |-
+#            id(relay1_start_time) = millis() / 1000;
+#    on_turn_off:
+#      - lambda: |-
+#            uint32_t now = millis() / 1000;
+#            id(relay1_total_runtime) += (now - id(relay1_start_time));
+#            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
+#  - platform: gpio
+#    name: ${device_name} switch 2
+#    pin: GPIO5
+#    id: relay_2
+#    icon: mdi:electric-switch
+#    on_turn_on:
+#      - lambda: |-
+#            id(relay2_start_time) = millis() / 1000;
+#    on_turn_off:
+#      - lambda: |-
+#            uint32_t now = millis() / 1000;
+#            id(relay2_total_runtime) += (now - id(relay2_start_time));
+#            id(relay_2_state_numeric).publish_state(id(relay2_total_runtime));
 
 ###########################################
 # L E D  &  W M
@@ -254,12 +254,50 @@ output:
     inverted: true
     frequency: 1000 Hz
 
+  - platform: gpio
+    pin: GPIO12
+    id: relay_1
+
+  - platform: gpio
+    pin: GPIO5
+    id: relay_2
+
+
 light:
   - platform: monochromatic
     id: blue_led_light
     name: Blue LED
     output: blue_led
     internal: true
+
+  - platform: binary
+    name: light 1
+    id: light_1
+    output: relay_1
+    icon: mdi:lightbulb
+    on_turn_on:
+      - lambda: |-
+          id(relay1_start_time) = millis() / 1000;
+    on_turn_off:
+      - lambda: |-
+          uint32_t now = millis() / 1000;
+          id(relay1_total_runtime) += (now - id(relay1_start_time));
+          id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
+
+  - platform: binary
+    name: light 2
+    id: light_2
+    output: relay_2
+    icon: mdi:lightbulb
+    on_turn_on:
+      - lambda: |-
+          id(relay2_start_time) = millis() / 1000;
+    on_turn_off:
+      - lambda: |-
+          uint32_t now = millis() / 1000;
+          id(relay2_total_runtime) += (now - id(relay2_start_time));
+          id(relay_2_state_numeric).publish_state(id(relay2_total_runtime));
+
     
     
 ###########################################
