@@ -201,7 +201,7 @@ light:
   - platform: binary
     name: ${device_name} light 1
     id: relay_1_light
-    output: relay_1
+    switch: relay_1
     icon: mdi:lightbulb
 
 
