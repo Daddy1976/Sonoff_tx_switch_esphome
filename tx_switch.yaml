@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "3.3"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "3.4"       # ← ZOBRAZÍ sa v Home Assistante
 
   on_boot:
     priority: -100
@@ -42,7 +42,7 @@ wifi:
     - script.execute: update_led_state
 
 logger:
-  level: INFO
+  level: debug
 
 safe_mode:
   disabled: true
@@ -71,6 +71,7 @@ web_server:
 sensor:
   - platform: uptime
     name: Uptime
+    internal: true
 
   - platform: wifi_signal
     id: wifi_signal_db
@@ -117,15 +118,18 @@ text_sensor:
   - platform: version
     name: ESP Version
     entity_category: "diagnostic"
+    internal: true
   - platform: wifi_info
     ip_address:
       name: IP
       entity_category: "diagnostic"
       icon: mdi:ip-network
+      internal: true
     ssid:
       name: SSID
       entity_category: "diagnostic"
       icon: mdi:access-point
+      internal: true
     bssid:
       name: "Connected"
       filters:
