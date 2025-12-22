@@ -198,10 +198,10 @@ light:
     output: blue_led
     internal: true
     
-  - platform: switch
+  - platform: binary
     name: ${device_name} light 1
     id: relay_1_light
-    switch_id: relay_1
+    output: relay_1
     icon: mdi:lightbulb
 
 
