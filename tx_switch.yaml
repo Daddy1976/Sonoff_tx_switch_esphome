@@ -157,27 +157,28 @@ binary_sensor:
     name: "Sonoff TX Touchpad 1"
     on_press:
       - script.execute: led_flash
-      - switch.toggle: relay_1
+      - light.toggle: light_1
+#      - switch.toggle: relay_1
 
 
 ###########################################
 # R E L É
 ###########################################
 
-switch:
-  - platform: gpio
-    name: ${device_name} switch 1
-    pin: GPIO012
-    id: relay_1
-    icon: mdi:electric-switch
-    on_turn_on:
-      - lambda: |-
-            id(relay1_start_time) = millis() / 1000;
-    on_turn_off:
-      - lambda: |-
-            uint32_t now = millis() / 1000;
-            id(relay1_total_runtime) += (now - id(relay1_start_time));
-            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
+#switch:
+#  - platform: gpio
+#    name: ${device_name} switch 1
+#    pin: GPIO012
+#    id: relay_1
+#    icon: mdi:electric-switch
+#    on_turn_on:
+#      - lambda: |-
+#            id(relay1_start_time) = millis() / 1000;
+#    on_turn_off:
+#      - lambda: |-
+#            uint32_t now = millis() / 1000;
+#            id(relay1_total_runtime) += (now - id(relay1_start_time));
+#            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
 
 
 ###########################################
@@ -190,6 +191,10 @@ output:
     pin: GPIO13
     inverted: true
     frequency: 1000 Hz
+    
+  - platform: gpio
+    pin: GPIO12
+    id: relay_1
 
 light:
   - platform: monochromatic
@@ -200,9 +205,17 @@ light:
     
   - platform: binary
     name: ${device_name} light 1
-    id: relay_1_light
-    switch: relay_1
+    id: light_1
+    output: relay_1
     icon: mdi:lightbulb
+    on_turn_on:
+      - lambda: |-
+            id(relay1_start_time) = millis() / 1000;
+    on_turn_off:
+      - lambda: |-
+            uint32_t now = millis() / 1000;
+            id(relay1_total_runtime) += (now - id(relay1_start_time));
+            id(relay_1_state_numeric).publish_state(id(relay1_total_runtime));
 
 
 ###########################################
