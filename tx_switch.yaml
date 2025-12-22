@@ -158,6 +158,7 @@ binary_sensor:
     on_press:
       - script.execute: led_flash
       - light.toggle: light_1
+    icon: mdi:gesture-tap-button
 #      - switch.toggle: relay_1
 
 
