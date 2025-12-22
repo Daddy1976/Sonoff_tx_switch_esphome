@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "3.2"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "3.3"       # ← ZOBRAZÍ sa v Home Assistante
 
   on_boot:
     priority: -100
@@ -81,7 +81,7 @@ sensor:
 
   # PREVÁDZKOVÝ ČAS RELÉ 1
   - platform: template
-    name: "Celkový Čas"
+    name: "Time Light 1"
     id: relay_1_state_numeric
     unit_of_measurement: "s"
     device_class: duration
