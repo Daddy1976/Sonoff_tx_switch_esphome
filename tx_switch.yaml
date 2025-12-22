@@ -154,7 +154,7 @@ binary_sensor:
         input: true
         pullup: true
       inverted: true
-    name: "Sonoff TX Touchpad 1"
+    name: "Touchpad 1"
     on_press:
       - script.execute: led_flash
       - light.toggle: light_1
