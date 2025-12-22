@@ -195,7 +195,7 @@ binary_sensor:
     name: "Sonoff TX Touchpad 1"
     on_press:
       - script.execute: led_flash
-      - light.toggle: relay_1
+      - light.toggle: light_1
     icon: mdi:gesture-tap-button
       
   - platform: gpio
@@ -208,7 +208,7 @@ binary_sensor:
     name: "Sonoff TX Touchpad 2"
     on_press:
       - script.execute: led_flash
-      - light.toggle: relay_2
+      - light.toggle: light_2
     icon: mdi:gesture-tap-button
 
 ###########################################
