@@ -2,7 +2,7 @@ esphome:
   name: ${device_name}
   project:
     name: "Mark.Sonoff_T1EU2C-TX_Series"
-    version: "2.9"       # ← ZOBRAZÍ sa v Home Assistante
+    version: "3.0"       # ← ZOBRAZÍ sa v Home Assistante
 
   on_boot:
     priority: -100
@@ -197,6 +197,12 @@ light:
     name: Blue LED
     output: blue_led
     internal: true
+    
+  - platform: switch
+    name: ${device_name} light 1
+    id: relay_1_light
+    switch_id: relay_1
+    icon: mdi:lightbulb
 
 
 ###########################################
